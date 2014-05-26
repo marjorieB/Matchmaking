@@ -49,7 +49,7 @@ public class ServeurImpl implements ServeurItf {
 						i++;
 					}
 					// on récupère les joueurs de summonerElo étant égale à plus ou moins 20 unités du summonerElo du joueur passé en paramètre
-					if((tmp.getSummonerElo() > (joueur.getSummonerElo() - 20)) || 
+					if((tmp.getSummonerElo() > (joueur.getSummonerElo() - 20)) &&
 							(tmp.getSummonerElo() < (joueur.getSummonerElo() + 20))) {
 						sl1.add(tmp);
 					}
@@ -59,7 +59,7 @@ public class ServeurImpl implements ServeurItf {
 					if (tmp.getLatency() < joueur.getLatency()) {
 						j++;
 					}
-					if ((tmp.getLatency() > joueur.getLatency() - 20) || 
+					if ((tmp.getLatency() > joueur.getLatency() - 20) && 
 							(tmp.getLatency() < joueur.getLatency() + 20)) {
 						sl2.add(tmp);
 					}					
@@ -75,7 +75,7 @@ public class ServeurImpl implements ServeurItf {
 				}
 				else {
 					while((tmp = choixJoueur(joueur, res)) == null) {
-						System.out.println("tmp est nul");
+						System.out.println("tmp est nul, ce cas ne peut pas arriver!!!");
 						l1.remove(tmp);
 						l2.remove(tmp);
 						l3.remove(tmp);

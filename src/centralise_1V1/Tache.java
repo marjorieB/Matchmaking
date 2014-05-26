@@ -2,7 +2,6 @@ package centralise_1V1;
 
 import java.rmi.RemoteException;
 import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -26,7 +25,7 @@ public class Tache {
 		
 		@Override
 		public void run() {
-			System.out.println("tache dans run");
+			System.out.println("tache dans run liste de taille " + l3.size());
 			for (int i = 0; i < l3.size(); i++) {
 				JoueurItf j = l3.get(i);
 				try {
