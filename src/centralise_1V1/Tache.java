@@ -48,7 +48,7 @@ public class Tache {
 		
 		public void broad_matchmaking () {
 			int i = 0;
-			int min = Integer.MAX_VALUE;
+			int min;
 			JoueurItf ret = null;
 			JoueurItf joueur;
 			LinkedList<JoueurItf> toMatch = new LinkedList<JoueurItf>();
@@ -67,29 +67,59 @@ public class Tache {
 				}
 				i++;
 			}
-			while (toMatch.size() < 1) {
+			while (toMatch.size() > 1) {
+				min = Integer.MAX_VALUE;
 				joueur = toMatch.getFirst();
-				for (JoueurItf j : toMatch) {
+				try {
+					for (JoueurItf j : toMatch) {
+						if (j != joueur) {
+							if (Math.abs(j.getSummonerElo() - joueur.getSummonerElo()) < min) {
+								min = Math.abs(j.getSummonerElo() - joueur.getSummonerElo());
+								ret = j;
+							}	
+						}
+					}
+					joueur.InfoJoueur(ret);
+					ret.InfoJoueur(joueur);
+					toMatch.remove(joueur);
+					toMatch.remove(ret);
+					l1.remove(joueur);
+					l1.remove(ret);
+					l2.remove(joueur);
+					l2.remove(ret);
+					l3.remove(joueur);
+					l3.remove(ret);
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			if (!toMatch.isEmpty()) {
+				// il reste normallement uniquement un joueur
+				joueur = toMatch.getFirst();
+				min = Integer.MAX_VALUE;
+				for (JoueurItf j: l1) {
 					if (j != joueur) {
 						try {
 							if (Math.abs(j.getSummonerElo() - joueur.getSummonerElo()) < min) {
 								min = Math.abs(j.getSummonerElo() - joueur.getSummonerElo());
 								ret = j;
 							}
+							joueur.InfoJoueur(ret);
+							ret.InfoJoueur(joueur);
+							toMatch.remove(joueur);
+							toMatch.remove(ret);
+							l1.remove(joueur);
+							l1.remove(ret);
+							l2.remove(joueur);
+							l2.remove(ret);
+							l3.remove(joueur);
+							l3.remove(ret);							
 						} catch (RemoteException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
-				}
-				try {
-					joueur.InfoJoueur(ret);
-					ret.InfoJoueur(joueur);
-					toMatch.remove(joueur);
-					toMatch.remove(ret);
-				} catch (RemoteException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
 				}
 			}
 		}
