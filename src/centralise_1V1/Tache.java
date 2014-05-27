@@ -24,7 +24,7 @@ public class Tache {
 		boolean broad_matchmaking = false;
 		
 		@Override
-		public void run() {
+		public synchronized void run() {
 			System.out.println("tache dans run liste de taille " + l3.size());
 			for (int i = 0; i < l3.size(); i++) {
 				JoueurItf j = l3.get(i);
@@ -46,7 +46,7 @@ public class Tache {
 			
 		}
 		
-		public void broad_matchmaking () {
+		public synchronized void broad_matchmaking () {
 			int i = 0;
 			int min;
 			JoueurItf ret = null;

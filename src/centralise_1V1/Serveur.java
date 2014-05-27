@@ -11,8 +11,7 @@ public class Serveur {
 			// création et enregistrement du serveur
 			ServeurItf s = new ServeurImpl();
 			UnicastRemoteObject.exportObject(s, 0);
-			Registry registry = LocateRegistry.getRegistry("localhost");
-			
+			Registry registry = LocateRegistry.createRegistry(1099);		
 			registry.rebind("serveur", s);
 		} catch (IOException e) {
 			e.printStackTrace();

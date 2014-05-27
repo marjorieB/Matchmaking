@@ -23,7 +23,7 @@ public class ServeurImpl implements ServeurItf {
 	}
 	
 	@Override
-	public void matchmaking (JoueurItf joueur) {
+	public synchronized void matchmaking (JoueurItf joueur) {
 		int i = 0;
 		int j = 0;
 		int k = 0;
@@ -92,7 +92,7 @@ public class ServeurImpl implements ServeurItf {
 		}
 	}
 
-	public LinkedList<JoueurItf> intersection (LinkedList<JoueurItf> sl1, LinkedList<JoueurItf> sl2) {
+	public synchronized LinkedList<JoueurItf> intersection (LinkedList<JoueurItf> sl1, LinkedList<JoueurItf> sl2) {
 		LinkedList<JoueurItf> res = new LinkedList<JoueurItf>();
 		
 		for (JoueurItf j1 : sl1) {
@@ -105,7 +105,7 @@ public class ServeurImpl implements ServeurItf {
 		return res;
 	}
 	
-	public JoueurItf choixJoueur (JoueurItf joueur, LinkedList<JoueurItf> res) {
+	public synchronized JoueurItf choixJoueur (JoueurItf joueur, LinkedList<JoueurItf> res) {
 		int max = 0;
 		JoueurItf ret = null;
 		int min = Integer.MAX_VALUE;

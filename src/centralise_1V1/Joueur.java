@@ -22,7 +22,7 @@ public class Joueur {
 		try {
 			
 			// recherche du serveur pour effectuer un matchmaking
-			Registry registry = LocateRegistry.getRegistry("localhost");
+			Registry registry = LocateRegistry.getRegistry("localhost", 1099);
 			ServeurItf s = (ServeurItf) registry.lookup("serveur");
 			
 			Connection connection = null;
