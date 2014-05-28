@@ -22,7 +22,7 @@ public class ThreadServer extends Thread {
 		l2 = new LinkedList<JoueurItf>();
 		l3 = new LinkedList<JoueurItf>();
 		timer = new Timer();
-		timer.scheduleAtFixedRate(new TacheServeur(), 0, 5000);
+		timer.scheduleAtFixedRate(new TacheServeur(), 0, 3000);
 	}
 	
 	public void run () {
@@ -42,31 +42,26 @@ public class ThreadServer extends Thread {
 	}
 	
 	public void matchmaking (JoueurItf joueur) {
-		int i = 0;
-		int j = 0;
-		int k = 0;
-		JoueurItf tmp;
-		LinkedList<JoueurItf> sl1 = new LinkedList<JoueurItf>();
-		LinkedList<JoueurItf> sl2 = new LinkedList<JoueurItf>();
-		LinkedList<JoueurItf> res = new LinkedList<JoueurItf>();
-		ListIterator<JoueurItf> it1 = l1.listIterator();
-		ListIterator<JoueurItf> it2 = l2.listIterator();
-		ListIterator<JoueurItf> it3 = l3.listIterator();
-		
-		joueur.setDuration(0);
-		if (l1.isEmpty()) {
-			synchronized (l1) {
+		synchronized(l1) {
+			int i = 0;
+			int j = 0;
+			int k = 0;
+			JoueurItf tmp;
+			LinkedList<JoueurItf> sl1 = new LinkedList<JoueurItf>();
+			LinkedList<JoueurItf> sl2 = new LinkedList<JoueurItf>();
+			LinkedList<JoueurItf> res = new LinkedList<JoueurItf>();
+			ListIterator<JoueurItf> it1 = l1.listIterator();
+			ListIterator<JoueurItf> it2 = l2.listIterator();
+			ListIterator<JoueurItf> it3 = l3.listIterator();
+			
+			joueur.setDuration(0);
+			if (l1.isEmpty()) {
+				
 				it1.add(joueur);
-			}
-			synchronized (l2) {
 				l2.add(joueur);
-			}
-			synchronized (l3) {
 				l3.add(joueur);
 			}
-		}
-		else {
-			synchronized (l1) {
+			else {
 				while(it1.hasNext()) {
 					tmp = it1.next();
 					if (tmp.getSummonerElo() < joueur.getSummonerElo()) {
@@ -78,8 +73,6 @@ public class ThreadServer extends Thread {
 						sl1.add(tmp);
 					}
 				}
-			}
-			synchronized (l2) {
 				while (it2.hasNext()) {
 					tmp = it2.next();
 					if (tmp.getLatency() < joueur.getLatency()) {
@@ -90,46 +83,31 @@ public class ThreadServer extends Thread {
 						sl2.add(tmp);
 					}					
 				}
-			}
-			synchronized (l3) {
 				while (it3.hasNext() && (it3.next().getDuration() < joueur.getDuration())) {
 					k++;
 				}
-			}
-			res = intersection(sl1, sl2);
-			if (res.isEmpty()) {
-				synchronized (l1) {
+				res = intersection(sl1, sl2);
+				if (res.isEmpty()) {
 					l1.add(i, joueur);
-				}
-				synchronized (l2) {
 					l2.add(j, joueur);
-				}
-				synchronized (l3) {
 					l3.add(k, joueur);
 				}
-			}
-			else {
-				while((tmp = choixJoueur(joueur, res)) == null) {
-					System.out.println("tmp est nul, ce cas ne peut pas arriver!!!");
+				else {
+					while((tmp = choixJoueur(joueur, res)) == null) {
+						System.out.println("tmp est nul, ce cas ne peut pas arriver!!!");
+						l1.remove(tmp);
+						l2.remove(tmp);
+						l3.remove(tmp);
+					}
+					EnvoiInfoJoueur(tmp, joueur);
+					/*joueur.InfoJoueur(tmp);
+					tmp.InfoJoueur(joueur);*/
 					l1.remove(tmp);
 					l2.remove(tmp);
-					l3.remove(tmp);
-				}
-				EnvoiInfoJoueur(tmp, joueur);
-				/*joueur.InfoJoueur(tmp);
-				tmp.InfoJoueur(joueur);*/
-				synchronized(l1) {
-					l1.remove(tmp);
-				}
-				synchronized (l2) {
-					l2.remove(tmp);
-				}
-				synchronized (l3) {
 					l3.remove(tmp);
 				}
 			}
 		}
-		
 	}
 
 	public LinkedList<JoueurItf> intersection (LinkedList<JoueurItf> sl1, LinkedList<JoueurItf> sl2) {
@@ -190,10 +168,10 @@ public class ThreadServer extends Thread {
 			 */
 			br1.writeBytes("infoJoueur " + j1.getDuration() + " " + j2.getSummonerElo()
 					+ " " + j2.getLatency() + " " + j2.getDuration() + "\n");
-			br1.flush();
+			//br1.flush();
 			br2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
 					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
-			br2.flush();
+			//br2.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -207,7 +185,7 @@ public class ThreadServer extends Thread {
 		@Override
 		public void run() {
 			//System.out.println("tache dans run liste de taille " + l3.size());
-			synchronized (l3) {
+			synchronized (l1) {
 				for (int i = 0; i < l3.size(); i++) {
 					JoueurItf j = l3.get(i);
 					j.setDuration(j.getDuration() + 1);
@@ -215,69 +193,61 @@ public class ThreadServer extends Thread {
 						broad_matchmaking = true;
 					}
 				}
-			}
-			if (broad_matchmaking) {
-				broad_matchmaking();
-				System.out.println("appel à broad_matchmaking");
-				broad_matchmaking = false;
+				if (broad_matchmaking) {
+					broad_matchmaking();
+					System.out.println("appel à broad_matchmaking");
+					broad_matchmaking = false;
+				}
 			}
 			
 		}
 		
 		public void broad_matchmaking () {
-			int i = 0;
-			int min;
-			JoueurItf ret = null;
-			JoueurItf joueur;
-			LinkedList<JoueurItf> toMatch = new LinkedList<JoueurItf>();
-			
-			while (toMatch.size() <= 1) {
-				synchronized (l3) {
+			synchronized(l1) {
+				int i = 0;
+				int min;
+				JoueurItf ret = null;
+				JoueurItf joueur;
+				LinkedList<JoueurItf> toMatch = new LinkedList<JoueurItf>();
+				
+				while (toMatch.size() <= 1) {
 					for (JoueurItf j : l3) {
 						if (j.getDuration() >= (5 - i)) {
 							toMatch.add(j);
 						}
 					}
+					i++;
 				}
-				i++;
-			}
-			System.out.println("taille de toMatch = " + toMatch.size());
-			while (toMatch.size() > 1) {
-				min = Integer.MAX_VALUE;
-				joueur = toMatch.getFirst();
-				for (JoueurItf j : toMatch) {
-					if (j != joueur) {
-						if (Math.abs(j.getSummonerElo() - joueur.getSummonerElo()) < min) {
-							min = Math.abs(j.getSummonerElo() - joueur.getSummonerElo());
-							ret = j;
-						}	
+				System.out.println("taille de toMatch = " + toMatch.size());
+				while (toMatch.size() > 1) {
+					min = Integer.MAX_VALUE;
+					joueur = toMatch.getFirst();
+					for (JoueurItf j : toMatch) {
+						if (j != joueur) {
+							if (Math.abs(j.getSummonerElo() - joueur.getSummonerElo()) < min) {
+								min = Math.abs(j.getSummonerElo() - joueur.getSummonerElo());
+								ret = j;
+							}	
+						}
 					}
-				}
-				EnvoiInfoJoueur(ret, joueur);
-				/*joueur.InfoJoueur(ret);
-				ret.InfoJoueur(joueur);*/
-				toMatch.remove(joueur);
-				toMatch.remove(ret);
-				synchronized (l1) {
+					EnvoiInfoJoueur(ret, joueur);
+					/*joueur.InfoJoueur(ret);
+					ret.InfoJoueur(joueur);*/
+					toMatch.remove(joueur);
+					toMatch.remove(ret);
 					l1.remove(joueur);
 					l1.remove(ret);
-				}
-				synchronized (l2) {
 					l2.remove(joueur);
 					l2.remove(ret);
-				}
-				synchronized (l3) {
 					l3.remove(joueur);
 					l3.remove(ret);
-				}
-			}			
-			if (!toMatch.isEmpty()) {
-				if (!l1.isEmpty()) {
-					// il reste normallement uniquement un joueur
-					joueur = toMatch.getFirst();
-					min = Integer.MAX_VALUE;
-					synchronized (l1) {
-						
+				}			
+				if (!toMatch.isEmpty()) {
+					if (!l1.isEmpty()) {
+						// il reste normallement uniquement un joueur
+						joueur = toMatch.getFirst();
+						min = Integer.MAX_VALUE;
+							
 						for (JoueurItf j: l1) {
 							if (j != joueur) {
 								if (Math.abs(j.getSummonerElo() - joueur.getSummonerElo()) < min) {
@@ -291,14 +261,10 @@ public class ThreadServer extends Thread {
 						}
 						l1.remove(joueur);
 						l1.remove(ret);
-					}
-					toMatch.remove(joueur);
-					toMatch.remove(ret);
-					synchronized (l2) {
+						toMatch.remove(joueur);
+						toMatch.remove(ret);
 						l2.remove(joueur);
 						l2.remove(ret);
-					}
-					synchronized (l3) {
 						l3.remove(joueur);
 						l3.remove(ret);
 					}

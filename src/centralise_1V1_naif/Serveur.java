@@ -27,7 +27,6 @@ public class Serveur {
 			while (true) {
 				scom = ss.accept();
 				br = new BufferedReader(new InputStreamReader(scom.getInputStream()));
-				System.out.println("en attente de demande de matchmaking");
 				recu = br.readLine();
 				System.out.println(recu);
 				demandes = recu.split(" ");

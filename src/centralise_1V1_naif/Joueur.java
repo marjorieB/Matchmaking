@@ -1,16 +1,9 @@
 package centralise_1V1_naif;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Collections;
-import java.util.LinkedList;
+
 
 public class Joueur {
 	public static void main (String [] arg) {
@@ -26,8 +19,8 @@ public class Joueur {
 			// récupération des propriétés des joueurs à partir du ficheir joueur_proprietes.csv			
 			fr = new FileReader("../../M1_SAR/stage_M1/joueurs_proprietes.csv");
 			br = new BufferedReader(fr);
-			int i = 0;///////////////////////
-			while ((lu = br.readLine()) != null && i < 4) {
+			int i = 0;
+			while ((lu = br.readLine()) != null && i < 145) {
 				proprietes = lu.split(",");
 				summonerElo = Integer.parseInt(proprietes[1]);
 				latency = (int)Double.parseDouble(proprietes[2]);
@@ -35,8 +28,7 @@ public class Joueur {
 				j = new JoueurImpl(summonerElo, latency);
 				ThreadJoueur tj = new ThreadJoueur(j);
 				tj.start();
-				i++;/////////////////
-				//j.match();
+				i++;
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

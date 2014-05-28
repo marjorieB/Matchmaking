@@ -50,8 +50,9 @@ public class JoueurImpl implements JoueurItf {
 		String [] tab;
 		
 		try {
+			int i = (int)(Math.random() * 10000);
 			// attente de l'application pendant un temps random pour avoir des séquences d'exécution différentes
-			Thread.sleep((int)(Math.random() * 5000));
+			Thread.sleep(i);
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
@@ -62,13 +63,17 @@ public class JoueurImpl implements JoueurItf {
 			dos = new DataOutputStream(os);
 			//demande de matchmaking au serveur
 			dos.writeBytes("matchmaking " + summonerElo + " " + latency + "\n");
-			dos.flush();
-			System.out.println("demande de matchmaking envoyée au serveur");
+			//dos.flush();
+			System.out.println("joueur: summonerElo = " + summonerElo + 
+					" latence = " + latency + " demande de matchmaking au serveur");
 			
 			// réception de la réponse du serveur.
 			for (int i = 0; i < 2; i++) {
 				br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 				recu = br.readLine();
+				if (recu == null) {
+					System.out.println("RECU EST NUL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+				}
 				tab = recu.split(" ");
 				if (tab[0].equalsIgnoreCase("infoJoueur")) {
 					jouer(Integer.parseInt(tab[1]), Integer.parseInt(tab[2]),
