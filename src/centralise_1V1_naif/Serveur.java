@@ -26,8 +26,8 @@ public class Serveur {
 			ss = new ServerSocket(12345);
 			while (true) {
 				scom = ss.accept();
-				System.out.println("une connection a été acceptée");
 				br = new BufferedReader(new InputStreamReader(scom.getInputStream()));
+				System.out.println("en attente de demande de matchmaking");
 				recu = br.readLine();
 				System.out.println(recu);
 				demandes = recu.split(" ");

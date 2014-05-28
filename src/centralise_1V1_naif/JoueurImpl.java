@@ -61,7 +61,8 @@ public class JoueurImpl implements JoueurItf {
 			os = s.getOutputStream();
 			dos = new DataOutputStream(os);
 			//demande de matchmaking au serveur
-			dos.writeBytes("matchmaking " + summonerElo + " " + latency);
+			dos.writeBytes("matchmaking " + summonerElo + " " + latency + "\n");
+			dos.flush();
 			System.out.println("demande de matchmaking envoyée au serveur");
 			
 			// réception de la réponse du serveur.

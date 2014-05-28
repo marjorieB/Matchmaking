@@ -189,9 +189,11 @@ public class ThreadServer extends Thread {
 			 * de son adversaire 
 			 */
 			br1.writeBytes("infoJoueur " + j1.getDuration() + " " + j2.getSummonerElo()
-					+ " " + j2.getLatency() + " " + j2.getDuration());
+					+ " " + j2.getLatency() + " " + j2.getDuration() + "\n");
+			br1.flush();
 			br2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
-					+ " " + j1.getLatency() + " " + j1.getDuration());
+					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
+			br2.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
