@@ -51,7 +51,7 @@ public class JoueurImpl implements JoueurItf {
 		
 		try {
 			// attente de l'application pendant un temps random pour avoir des séquences d'exécution différentes
-			Thread.sleep((int)(Math.random()) * 5000);
+			Thread.sleep((int)(Math.random() * 5000));
 		} catch (InterruptedException e1) {
 			e1.printStackTrace();
 		}
