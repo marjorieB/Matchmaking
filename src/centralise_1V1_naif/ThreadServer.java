@@ -54,9 +54,7 @@ public class ThreadServer extends Thread {
 			ListIterator<JoueurItf> it2 = l2.listIterator();
 			ListIterator<JoueurItf> it3 = l3.listIterator();
 			
-			//joueur.setDuration(0);
 			if (l1.isEmpty()) {
-				
 				l1.add(joueur);
 				l2.add(joueur);
 				l3.add(joueur);
@@ -100,8 +98,6 @@ public class ThreadServer extends Thread {
 						l3.remove(tmp);
 					}
 					EnvoiInfoJoueur(tmp, joueur);
-					/*joueur.InfoJoueur(tmp);
-					tmp.InfoJoueur(joueur);*/
 					l1.remove(tmp);
 					l2.remove(tmp);
 					l3.remove(tmp);
@@ -187,7 +183,7 @@ public class ThreadServer extends Thread {
 			System.out.println("tache dans run liste de taille " + l3.size());
 			synchronized(joueurs) {
 				for (int i = 0; i < joueurs.size(); i++) {
-					JoueurItf j = l3.get(i);
+					JoueurItf j = joueurs.get(i);
 					j.setDuration(j.getDuration() + 1);
 				}
 			}
@@ -235,8 +231,6 @@ public class ThreadServer extends Thread {
 						}
 					}
 					EnvoiInfoJoueur(ret, joueur);
-					/*joueur.InfoJoueur(ret);
-					ret.InfoJoueur(joueur);*/
 					toMatch.remove(joueur);
 					toMatch.remove(ret);
 					l1.remove(joueur);
@@ -260,8 +254,6 @@ public class ThreadServer extends Thread {
 								}			
 							}
 						}
-						/*joueur.InfoJoueur(ret);
-						ret.InfoJoueur(joueur);	*/	
 						EnvoiInfoJoueur(ret, joueur);
 						toMatch.remove(joueur);
 						toMatch.remove(ret);
