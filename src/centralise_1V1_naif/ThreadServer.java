@@ -57,7 +57,7 @@ public class ThreadServer extends Thread {
 			//joueur.setDuration(0);
 			if (l1.isEmpty()) {
 				
-				it1.add(joueur);
+				l1.add(joueur);
 				l2.add(joueur);
 				l3.add(joueur);
 			}
