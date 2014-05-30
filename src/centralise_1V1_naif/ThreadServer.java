@@ -54,7 +54,7 @@ public class ThreadServer extends Thread {
 			ListIterator<JoueurItf> it2 = l2.listIterator();
 			ListIterator<JoueurItf> it3 = l3.listIterator();
 			
-			joueur.setDuration(0);
+			//joueur.setDuration(0);
 			if (l1.isEmpty()) {
 				
 				it1.add(joueur);
@@ -185,6 +185,12 @@ public class ThreadServer extends Thread {
 		@Override
 		public void run() {
 			System.out.println("tache dans run liste de taille " + l3.size());
+			synchronized(joueurs) {
+				for (int i = 0; i < joueurs.size(); i++) {
+					JoueurItf j = l3.get(i);
+					j.setDuration(j.getDuration() + 1);
+				}
+			}
 			synchronized (l1) {
 				for (int i = 0; i < l3.size(); i++) {
 					JoueurItf j = l3.get(i);

@@ -32,7 +32,9 @@ public class Serveur {
 				demandes = recu.split(" ");
 				if (demandes[0].equalsIgnoreCase("matchmaking")) {
 					synchronized (joueurs) {
-						joueurs.add(new JoueurImpl(Integer.parseInt(demandes[1]), Integer.parseInt(demandes[2]), scom));
+						JoueurItf joueur = new JoueurImpl(Integer.parseInt(demandes[1]), Integer.parseInt(demandes[2]), scom);
+						joueur.setDuration(0);
+						joueurs.add(joueur);
 						joueurs.notify();
 					}
 				}
