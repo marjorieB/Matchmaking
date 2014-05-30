@@ -168,10 +168,10 @@ public class ThreadServer extends Thread {
 			 */
 			br1.writeBytes("infoJoueur " + j1.getDuration() + " " + j2.getSummonerElo()
 					+ " " + j2.getLatency() + " " + j2.getDuration() + "\n");
-			//br1.flush();
 			br2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
 					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
-			//br2.flush();
+			j1.getSocket().close();
+			j2.getSocket().close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -184,7 +184,7 @@ public class ThreadServer extends Thread {
 		
 		@Override
 		public void run() {
-			//System.out.println("tache dans run liste de taille " + l3.size());
+			System.out.println("tache dans run liste de taille " + l3.size());
 			synchronized (l1) {
 				for (int i = 0; i < l3.size(); i++) {
 					JoueurItf j = l3.get(i);
@@ -194,8 +194,8 @@ public class ThreadServer extends Thread {
 					}
 				}
 				if (broad_matchmaking) {
-					broad_matchmaking();
 					System.out.println("appel à broad_matchmaking");
+					broad_matchmaking();
 					broad_matchmaking = false;
 				}
 			}
@@ -204,19 +204,17 @@ public class ThreadServer extends Thread {
 		
 		public void broad_matchmaking () {
 			synchronized(l1) {
-				int i = 0;
 				int min;
 				JoueurItf ret = null;
 				JoueurItf joueur;
 				LinkedList<JoueurItf> toMatch = new LinkedList<JoueurItf>();
 				
-				while (toMatch.size() <= 1) {
+				while (toMatch.size() < 1) {
 					for (JoueurItf j : l3) {
-						if (j.getDuration() >= (5 - i)) {
+						if (j.getDuration() >= 5) {
 							toMatch.add(j);
 						}
 					}
-					i++;
 				}
 				System.out.println("taille de toMatch = " + toMatch.size());
 				while (toMatch.size() > 1) {
@@ -253,16 +251,16 @@ public class ThreadServer extends Thread {
 								if (Math.abs(j.getSummonerElo() - joueur.getSummonerElo()) < min) {
 									min = Math.abs(j.getSummonerElo() - joueur.getSummonerElo());
 									ret = j;
-								}
-								EnvoiInfoJoueur(ret, joueur);
-								/*joueur.InfoJoueur(ret);
-								ret.InfoJoueur(joueur);	*/				
+								}			
 							}
 						}
-						l1.remove(joueur);
-						l1.remove(ret);
+						/*joueur.InfoJoueur(ret);
+						ret.InfoJoueur(joueur);	*/	
+						EnvoiInfoJoueur(ret, joueur);
 						toMatch.remove(joueur);
 						toMatch.remove(ret);
+						l1.remove(joueur);
+						l1.remove(ret);
 						l2.remove(joueur);
 						l2.remove(ret);
 						l3.remove(joueur);

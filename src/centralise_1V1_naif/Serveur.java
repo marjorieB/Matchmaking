@@ -38,6 +38,7 @@ public class Serveur {
 				}
 				else {
 					//erreur
+					System.out.println("fermeture de la socket c'est pour ca qu'après cest null!!!!!!");
 					scom.close();
 				}
 			}

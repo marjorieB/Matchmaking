@@ -20,7 +20,7 @@ public class Joueur {
 			fr = new FileReader("../../M1_SAR/stage_M1/joueurs_proprietes.csv");
 			br = new BufferedReader(fr);
 			int i = 0;
-			while ((lu = br.readLine()) != null && i < 145) {
+			while ((lu = br.readLine()) != null && i < 200) {
 				proprietes = lu.split(",");
 				summonerElo = Integer.parseInt(proprietes[1]);
 				latency = (int)Double.parseDouble(proprietes[2]);

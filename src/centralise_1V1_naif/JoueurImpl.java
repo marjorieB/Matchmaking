@@ -68,24 +68,17 @@ public class JoueurImpl implements JoueurItf {
 					" latence = " + latency + " demande de matchmaking au serveur");
 			
 			// réception de la réponse du serveur.
-			for (int i = 0; i < 2; i++) {
-				br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-				recu = br.readLine();
-				if (recu == null) {
-					System.out.println("RECU EST NUL!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-				}
-				tab = recu.split(" ");
-				if (tab[0].equalsIgnoreCase("infoJoueur")) {
-					jouer(Integer.parseInt(tab[1]), Integer.parseInt(tab[2]),
-							Integer.parseInt(tab[3]), Integer.parseInt(tab[4]));
-				}
-				/*else if (tab[0].equalsIgnoreCase("jouer")) {
-					//jouer();
-				}*/
-				else {
-					System.out.println("commande inconnue");
-				}
+			br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+			recu = br.readLine();
+			tab = recu.split(" ");
+			if (tab[0].equalsIgnoreCase("infoJoueur")) {
+				jouer(Integer.parseInt(tab[1]), Integer.parseInt(tab[2]),
+						Integer.parseInt(tab[3]), Integer.parseInt(tab[4]));
 			}
+			else {
+				System.out.println("commande inconnue");
+			}
+			s.close();
 			
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
