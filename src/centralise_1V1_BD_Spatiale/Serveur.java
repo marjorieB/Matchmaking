@@ -33,20 +33,34 @@ public class Serveur {
 	    	config.enableLoadExtension(true);
 
 	    	conn = DriverManager.getConnection("jdbc:sqlite:../../M1_SAR/stage_M1/bd_spatiale.db" ,config.toProperties());
+	    	
 	    	st = conn.createStatement();
+	    	System.out.println("avant le load extension");
+	    	//st.execute("SELECT load_extension('../../M1_SAR/stage_M1/spatialite-linux-i686-1.0a/VirtualShape.so')");
+	    	st.execute("SELECT load_extension('/usr/lib/libspatialite.so')");
+
+	    	System.out.println("après le load extension");
+	    	st.execute("SELECT InitSpatialMetadata()");
+	    	st.execute("INSERT OR IGNORE INTO spatial_ref_sys (srid, auth_name, auth_srid, ref_sys_name, proj4text)" +
+	    			" VALUES (4326, 'moi', 4326, 'WGS84', '+proh=longlat +ellps=WGS84 +datum=WGS84 +no_defs')");
+	    	System.out.println("après le InitSpatialMetadate");
 	    	st.executeUpdate("DROP TABLE IF EXISTS Joueurs");
+	    	System.out.println("après le drop");
 	    	st.executeUpdate("CREATE TABLE Joueurs(summonerId INTEGER, duration INTEGER, PRIMARY KEY(summonerId))");
 	    	System.out.println("create executé");
-	    	st.executeUpdate("SELECT AddGeometryColumn ('Joueurs', 'geom', 4326, 'POINT', 'XY')");
+	    	st.executeUpdate("SELECT AddGeometryColumn(\'Joueurs\', \'geom\', 4326, 'POINT', 2)");
+	    	System.out.println("addgeometryColumn exécuté");
 	    	st.executeUpdate("CREATE INDEX index_summonerId ON Joueurs(summonerId)");
-	    	st.executeUpdate("CreateSpatialIndex(Joueurs, geom)");
-	    	System.out.println("après addgeometry...");	
+	    	System.out.println("index créé");
+	    	st.executeUpdate("SELECT CreateSpatialIndex(\'Joueurs\', \'geom\')");
+	    	System.out.println("index spatial créé");
 	    } catch (ClassNotFoundException e1) {
 	    	e1.printStackTrace();    
 	    } catch(SQLException e) {
 	        System.err.println(e.getMessage());
 	    }
 	
+	    System.out.println("avant création de la thread");
 		ThreadServer t = new ThreadServer(joueurs, conn);
 		t.start();
 		
@@ -68,7 +82,7 @@ public class Serveur {
 				}
 				else {
 					//erreur
-					System.out.println("fermeture de la socket c'est pour ca qu'après cest null!!!!!!");
+					System.out.println("close de la socket");
 					scom.close();
 				}
 			}

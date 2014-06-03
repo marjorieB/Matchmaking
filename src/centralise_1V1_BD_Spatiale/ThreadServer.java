@@ -52,9 +52,9 @@ public class ThreadServer extends Thread {
 			Statement st = conn.createStatement();
 			
 			// récupération dans un resultSet des points les plus proches
-			res = st.executeQuery("select summonerId, x(geom), y(geom) from Joueurs where ST_Distance(GEOMETRY MakePoint(" +
-					joueur.getSummonerElo() + ", " + joueur.getLatency() + ")) ORDER BY ST_Distance(GEOMETRY, " + 
-					"MakePoint(" + joueur.getSummonerElo() + ", " + joueur.getLatency() + "LIMIT 1");
+			res = st.executeQuery("select summonerId, x(geom), y(geom) from Joueurs where ST_Distance(geom, MakePoint(" +
+					joueur.getSummonerElo() + ", " + joueur.getLatency() + ", 4326)) ORDER BY ST_Distance(geom, " + 
+					"MakePoint(" + joueur.getSummonerElo() + ", " + joueur.getLatency() + ", 4326)) LIMIT 1");
 			
 			if (res.next()) {
 				if ((res.getInt(2) > (joueur.getSummonerElo() - 20)) && (res.getInt(2) < (joueur.getSummonerElo() + 20)) 
@@ -70,9 +70,9 @@ public class ThreadServer extends Thread {
 			}
 			else {
 				// insertion du joueur dans la base
-				st.executeQuery("INSERT INTO Joueurs(summonerId, geom) VALUES (" + joueur.getSummonerId() + 
-						" " + joueur.getDuration() +  " , ST_GeomFromText('POINTZ(" + joueur.getSummonerElo() + " " + joueur.getLatency() + 
-						" " + ")', 4326");
+				st.executeUpdate("INSERT INTO Joueurs(summonerId, duration, geom) VALUES (" + joueur.getSummonerId() + 
+						", " + joueur.getDuration() +  " , ST_GeomFromText('POINT(" + joueur.getSummonerElo() + " " + joueur.getLatency() + 
+						" " + ")', 4326))");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -118,8 +118,8 @@ public class ThreadServer extends Thread {
 					}
 				}
 				//incrémenter le temps de l'ensemble des joueurs de la base
-				st.executeQuery("UPDATE Joueurs SET duration = duration " + 1);
-				res = st.executeQuery("select 1 from summoner where duration > 5 LIMIT 1");
+				st.executeUpdate("UPDATE Joueurs SET duration = duration + 1");
+				res = st.executeQuery("select 1 from Joueurs where duration > 5 LIMIT 1");
 				if (res.next()) {
 					broad_matchmaking = true;
 				}
@@ -137,42 +137,57 @@ public class ThreadServer extends Thread {
 		
 		public void broad_matchmaking () {
 			ResultSet res;
+			ResultSet res1;
 			ResultSet res2;
+			boolean continu = true;
 			boolean trouve = false;
+			boolean reste_joueur = false;
 			int summonerId1 = 0;
 			int summonerId2 = 0;
 			int summonerElo;
 			int min;
 			Statement st;
+			Statement st1;
 			try {
 				st = conn.createStatement();
+				st1 = conn.createStatement();
 			
-				res = st.executeQuery("select summonerId, x(geom), y(geom) from Joueurs where duration > " + 5);
-				while (res.next()) {
-					min = Integer.MAX_VALUE;
-					summonerId1 = res.getInt(1);
-					summonerElo = res.getInt(2);
-					while(res.next()) {
-						if ((res.getInt(1) == summonerId1) || (res.getInt(1) == summonerId2)) {
-							res.deleteRow();
-							continue;
+				while (continu) {
+					res = st.executeQuery("select summonerId, x(geom), y(geom) from Joueurs where duration > " + 5);
+					res1 = res;
+					if (res.next()) {
+						min = Integer.MAX_VALUE;
+						summonerId1 = res.getInt(1);
+						summonerElo = res.getInt(2);
+						while(res1.next()) {
+							reste_joueur = true;
+							if (summonerId1 != res1.getInt(1)) {
+								if (Math.abs(summonerElo - res1.getInt(2)) < min) {
+									trouve = true;
+									min = Math.abs(summonerElo - res1.getInt(2));
+									summonerId2 = res1.getInt(1);
+								}
+							}
 						}
-						if (Math.abs(summonerElo - res.getInt(2)) < min) {
-							trouve = true;
-							min = Math.abs(summonerElo - res.getInt(2));
-							summonerId2 = res.getInt(1);
+						if (trouve) {
+							st.executeUpdate("DELETE FROM Joueurs where summonerId = " + summonerId1);
+							st.executeUpdate("DELETE FROM Joueurs where summonerId = " + summonerId2);
+							EnvoiInfoJoueur(map.get(new Integer(summonerId2)), map.get(new Integer(summonerId1)));
+							reste_joueur = false;
+						}
+						else {
+							continu = false;
 						}
 					}
-					if (trouve) {
-						st.executeUpdate("DELETE FROM Joueurs where summonerId = " + summonerId1);
-						st.executeUpdate("DELETE FROM Joueurs where summonerId = " + summonerId2);
-						EnvoiInfoJoueur(map.get(new Integer(summonerId2)), map.get(new Integer(summonerId1)));
+					else {
+						continu = false;
 					}
 				}
-				res.last();
-				if (res.getRow() == 1) {
+				if (reste_joueur) {
+					res = st.executeQuery("select summonerId, x(geom), y(geom) from Joueurs where duration > " + 5);
+					res.next();
 					// il reste un tuple à matcher, le nombre de tuples dans le ResultSet n'était pas pair.
-					res2 = st.executeQuery("select summonerId from Joueurs where ST_Distance(GEOMETRY MakePoint(" +
+					res2 = st1.executeQuery("select summonerId from Joueurs where ST_Distance(GEOMETRY MakePoint(" +
 							res.getInt(2) + ", " + res.getInt(3) + ")) ORDER BY ST_Distance(GEOMETRY, " + 
 							"MakePoint(" + res.getInt(2) + ", " + res.getInt(3) + "LIMIT 1");
 					if (res2.next()) {
