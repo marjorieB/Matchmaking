@@ -2,7 +2,6 @@ package centralise_1V1_BD_Spatiale;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.net.Socket;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -28,54 +27,8 @@ public class ThreadServer extends Thread {
 	}
 	
 	public void run () {
-		while (true) {
-			synchronized(joueurs) {
-				while (joueurs.isEmpty()) {
-					try {
-						joueurs.wait();
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-				map.put(new Integer(joueurs.getFirst().getSummonerId()), joueurs.getFirst());
-				matchmaking(joueurs.getFirst());
-				joueurs.removeFirst();				
-			}
-		}
-	}
-	
-	public void matchmaking (JoueurItf joueur) {
-		ResultSet res;
-		boolean trouve = false;
-		int summonerId = 0;
-		try {
-			Statement st = conn.createStatement();
+		while(true) {
 			
-			// récupération dans un resultSet des points les plus proches
-			res = st.executeQuery("select summonerId, x(geom), y(geom) from Joueurs where ST_Distance(geom, MakePoint(" +
-					joueur.getSummonerElo() + ", " + joueur.getLatency() + ", 4326)) ORDER BY ST_Distance(geom, " + 
-					"MakePoint(" + joueur.getSummonerElo() + ", " + joueur.getLatency() + ", 4326)) LIMIT 1");
-			
-			if (res.next()) {
-				if ((res.getInt(2) > (joueur.getSummonerElo() - 20)) && (res.getInt(2) < (joueur.getSummonerElo() + 20)) 
-						&& (res.getInt(3) > (joueur.getLatency() - 20)) && (res.getInt(3) < (joueur.getLatency() + 20))) {
-					trouve = true;		
-					summonerId = res.getInt(1);
-				}
-			}
-			if (trouve) {
-				// suppression du joueur de la base qui match avec le joueur passé en paramètre
-				st.executeUpdate("DELETE FROM Joueurs where summonerId = " + summonerId);
-				EnvoiInfoJoueur(joueur, map.get(new Integer(summonerId)));
-			}
-			else {
-				// insertion du joueur dans la base
-				st.executeUpdate("INSERT INTO Joueurs(summonerId, duration, geom) VALUES (" + joueur.getSummonerId() + 
-						", " + joueur.getDuration() +  " , ST_GeomFromText('POINT(" + joueur.getSummonerElo() + " " + joueur.getLatency() + 
-						" " + ")', 4326))");
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
 	}
 	
@@ -85,7 +38,9 @@ public class ThreadServer extends Thread {
 
 		
 		try {
+			System.out.println("j'envoie a " + j1.getSummonerId());
 			br1 = new DataOutputStream(j1.getSocket().getOutputStream());
+			System.out.println("j'envoi a " + j2.getSummonerId());
 			br2 = new DataOutputStream(j2.getSocket().getOutputStream());
 			
 			/* on envoi au joueur le temps qu'il a attendu dans la file du serveur
@@ -109,96 +64,66 @@ public class ThreadServer extends Thread {
 			boolean broad_matchmaking = false;
 			try {
 				Statement st = conn.createStatement();
+				String requete = "INSERT INTO Joueurs (summonerId, duration, summonerIdRef, geom)";
 				ResultSet res;
-	
-				synchronized(joueurs) {
-					for (int i = 0; i < joueurs.size(); i++) {
-						JoueurItf j = joueurs.get(i);
-						j.setDuration(j.getDuration() + 1);
-					}
-				}
-				//incrémenter le temps de l'ensemble des joueurs de la base
-				st.executeUpdate("UPDATE Joueurs SET duration = duration + 1");
-				res = st.executeQuery("select 1 from Joueurs where duration > 5 LIMIT 1");
-				if (res.next()) {
-					broad_matchmaking = true;
-				}
-							
 				
-				if (broad_matchmaking) {
-					broad_matchmaking = false;
-					broad_matchmaking();
+				// update de la colonne Duration de l'ensemble des joueurs de la base
+				st.executeUpdate("UPDATE Joueurs SET duration = duration + 1");
+				// insertion de l'ensemble des joueurs qui se sont connectés.
+				synchronized(joueurs) {
+					while (joueurs.isEmpty()) {
+						try {
+							joueurs.wait();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					for (int i = 0; i < joueurs.size(); i++) {
+						if (i != joueurs.size() - 1) {
+							requete += "select " + joueurs.get(i).getSummonerId() + ", 1, -1, " + "ST_GeomFromText('POINT(" + joueurs.get(i).getSummonerElo() 
+									+ " " + joueurs.get(i).getLatency() + ")', 4326) UNION ALL ";
+						}
+						else {
+							requete += "select " + joueurs.get(i).getSummonerId() + ", 1, -1, " + "ST_GeomFromText('POINT(" + joueurs.get(i).getSummonerElo() 
+									+ " " + joueurs.get(i).getLatency() + ")', 4326);";
+						}
+						map.put(joueurs.get(i).getSummonerId(), joueurs.get(i));
+					}
+					System.out.println("insertion de " + joueurs.size());
+
+					joueurs.removeAll(joueurs);
+					st.executeUpdate(requete);
+					matchmaking();
 				}
+				
+				// test pour savoir si des joueurs ont attendus dans la file d'attente depuis trop longtemps
+				// traitement approprié en conséquence
+				
+				
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
 		
-		public void broad_matchmaking () {
-			ResultSet res;
-			ResultSet res1;
-			ResultSet res2;
-			boolean continu = true;
-			boolean trouve = false;
-			boolean reste_joueur = false;
-			int summonerId1 = 0;
-			int summonerId2 = 0;
-			int summonerElo;
-			int min;
+		
+		public void matchmaking() {
 			Statement st;
-			Statement st1;
+			ResultSet res;
 			try {
 				st = conn.createStatement();
-				st1 = conn.createStatement();
-			
-				while (continu) {
-					res = st.executeQuery("select summonerId, x(geom), y(geom) from Joueurs where duration > " + 5);
-					res1 = res;
-					if (res.next()) {
-						min = Integer.MAX_VALUE;
-						summonerId1 = res.getInt(1);
-						summonerElo = res.getInt(2);
-						while(res1.next()) {
-							reste_joueur = true;
-							if (summonerId1 != res1.getInt(1)) {
-								if (Math.abs(summonerElo - res1.getInt(2)) < min) {
-									trouve = true;
-									min = Math.abs(summonerElo - res1.getInt(2));
-									summonerId2 = res1.getInt(1);
-								}
-							}
-						}
-						if (trouve) {
-							st.executeUpdate("DELETE FROM Joueurs where summonerId = " + summonerId1);
-							st.executeUpdate("DELETE FROM Joueurs where summonerId = " + summonerId2);
-							EnvoiInfoJoueur(map.get(new Integer(summonerId2)), map.get(new Integer(summonerId1)));
-							reste_joueur = false;
-						}
-						else {
-							continu = false;
-						}
-					}
-					else {
-						continu = false;
-					}
+				res = st.executeQuery("select summonerId, summonerIdRef from Joueurs");
+				while (res.next()) {
+					System.out.println("id: " + res.getInt(1) + " id ref: "+ res.getInt(2));
 				}
-				if (reste_joueur) {
-					res = st.executeQuery("select summonerId, x(geom), y(geom) from Joueurs where duration > " + 5);
-					res.next();
-					// il reste un tuple à matcher, le nombre de tuples dans le ResultSet n'était pas pair.
-					res2 = st1.executeQuery("select summonerId from Joueurs where ST_Distance(GEOMETRY MakePoint(" +
-							res.getInt(2) + ", " + res.getInt(3) + ")) ORDER BY ST_Distance(GEOMETRY, " + 
-							"MakePoint(" + res.getInt(2) + ", " + res.getInt(3) + "LIMIT 1");
-					if (res2.next()) {
-						st.executeUpdate("DELETE FROM Joueurs where summonerId = " + res.getInt(1));
-						st.executeUpdate("DELETE FROM Joueurs where summonerId = " + res2.getInt(1));
-						EnvoiInfoJoueur(map.get(new Integer(res.getInt(1))), map.get(new Integer(res.getInt(1))));
-					}
-				}
+				
 			} catch (SQLException e) {
+				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}	
+			
+		}
+		
 	}
 }

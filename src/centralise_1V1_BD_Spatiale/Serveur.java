@@ -35,25 +35,27 @@ public class Serveur {
 	    	conn = DriverManager.getConnection("jdbc:sqlite:../../M1_SAR/stage_M1/bd_spatiale.db" ,config.toProperties());
 	    	
 	    	st = conn.createStatement();
-	    	System.out.println("avant le load extension");
-	    	//st.execute("SELECT load_extension('../../M1_SAR/stage_M1/spatialite-linux-i686-1.0a/VirtualShape.so')");
 	    	st.execute("SELECT load_extension('/usr/lib/libspatialite.so')");
 
-	    	System.out.println("après le load extension");
 	    	st.execute("SELECT InitSpatialMetadata()");
 	    	st.execute("INSERT OR IGNORE INTO spatial_ref_sys (srid, auth_name, auth_srid, ref_sys_name, proj4text)" +
 	    			" VALUES (4326, 'moi', 4326, 'WGS84', '+proh=longlat +ellps=WGS84 +datum=WGS84 +no_defs')");
-	    	System.out.println("après le InitSpatialMetadate");
 	    	st.executeUpdate("DROP TABLE IF EXISTS Joueurs");
-	    	System.out.println("après le drop");
-	    	st.executeUpdate("CREATE TABLE Joueurs(summonerId INTEGER, duration INTEGER, PRIMARY KEY(summonerId))");
-	    	System.out.println("create executé");
-	    	st.executeUpdate("SELECT AddGeometryColumn(\'Joueurs\', \'geom\', 4326, 'POINT', 2)");
-	    	System.out.println("addgeometryColumn exécuté");
+	    	st.executeUpdate("CREATE TABLE Joueurs(summonerId INTEGER, duration INTEGER, summonerIdRef INTEGER, PRIMARY KEY(summonerId))");
+	    	st.executeUpdate("SELECT AddGeometryColumn('Joueurs', 'geom', 4326, 'POINT', 2)");
 	    	st.executeUpdate("CREATE INDEX index_summonerId ON Joueurs(summonerId)");
-	    	System.out.println("index créé");
-	    	st.executeUpdate("SELECT CreateSpatialIndex(\'Joueurs\', \'geom\')");
-	    	System.out.println("index spatial créé");
+	    	st.executeUpdate("SELECT CreateSpatialIndex('Joueurs', 'geom')");
+	    	//st.executeUpdate("SELECT createMbrCache('Joueurs', 'geom')");
+	    	System.out.println("après createMbrCache");
+	    	st.executeUpdate("CREATE TRIGGER trigger_geom AFTER INSERT ON Joueurs " + 
+	    			"BEGIN DECLARE res integer;\n select summonerId into res from Joueurs" + 
+	    			" where NEW.SummonerId <> summonerId and ST_Distance(geom, New.geom) < 20 ORDER BY" +
+	    			"ST_Distance(geom, New.geom) LIMIT 1;\n IF (res IS NOT NULL) THEN\n" +
+	    			"UPDATE Joueurs SET summonerIdRef = NEW.summonerId WHERE summonerId=res;\n" +
+	    			"UPDATE Joueurs SET NEW.summonerIdRef = res WHERE summonerId=NEW.summonerIdtrigger;\n" +
+	    			"END IF;\n END;\n");
+	    	System.out.println("après création du trigger");		
+					
 	    } catch (ClassNotFoundException e1) {
 	    	e1.printStackTrace();    
 	    } catch(SQLException e) {
