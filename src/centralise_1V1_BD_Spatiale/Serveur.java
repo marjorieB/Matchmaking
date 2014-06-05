@@ -41,20 +41,20 @@ public class Serveur {
 	    	st.execute("INSERT OR IGNORE INTO spatial_ref_sys (srid, auth_name, auth_srid, ref_sys_name, proj4text)" +
 	    			" VALUES (4326, 'moi', 4326, 'WGS84', '+proh=longlat +ellps=WGS84 +datum=WGS84 +no_defs')");
 	    	st.executeUpdate("DROP TABLE IF EXISTS Joueurs");
-	    	st.executeUpdate("CREATE TABLE Joueurs(summonerId INTEGER, duration INTEGER, summonerIdRef INTEGER, PRIMARY KEY(summonerId))");
+	    	st.executeUpdate("CREATE TABLE Joueurs(summonerId INTEGER, duration INTEGER, PRIMARY KEY(summonerId))");
 	    	st.executeUpdate("SELECT AddGeometryColumn('Joueurs', 'geom', 4326, 'POINT', 2)");
 	    	st.executeUpdate("CREATE INDEX index_summonerId ON Joueurs(summonerId)");
 	    	st.executeUpdate("SELECT CreateSpatialIndex('Joueurs', 'geom')");
 	    	//st.executeUpdate("SELECT createMbrCache('Joueurs', 'geom')");
 	    	System.out.println("après createMbrCache");
-	    	st.executeUpdate("CREATE TRIGGER trigger_geom AFTER INSERT ON Joueurs " + 
-	    			"BEGIN DECLARE res integer;\n select summonerId into res from Joueurs" + 
+	    	/*st.executeUpdate("CREATE TRIGGER trigger_geom AFTER INSERT ON Joueurs\n" + 
+	    			"BEGIN\nDECLARE res integer;\n select summonerId into res from Joueurs" + 
 	    			" where NEW.SummonerId <> summonerId and ST_Distance(geom, New.geom) < 20 ORDER BY" +
 	    			"ST_Distance(geom, New.geom) LIMIT 1;\n IF (res IS NOT NULL) THEN\n" +
 	    			"UPDATE Joueurs SET summonerIdRef = NEW.summonerId WHERE summonerId=res;\n" +
 	    			"UPDATE Joueurs SET NEW.summonerIdRef = res WHERE summonerId=NEW.summonerIdtrigger;\n" +
 	    			"END IF;\n END;\n");
-	    	System.out.println("après création du trigger");		
+	    	System.out.println("après création du trigger");	*/	
 					
 	    } catch (ClassNotFoundException e1) {
 	    	e1.printStackTrace();    

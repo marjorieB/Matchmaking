@@ -35,12 +35,12 @@ public class JoueurImpl implements JoueurItf {
 	}
 	
 	@Override
-	public void jouer(int duration, int summonerEloAdversaire, int latencyAdversaire, int durationAdversaire) {
+	public void jouer(int duration, int summonerIdAdversaire, int summonerEloAdversaire, int latencyAdversaire, int durationAdversaire) {
 		
 		if (!dejaContacte) {
 			dejaContacte = true;
-			System.out.println("joueur: elo = " + this.getSummonerElo() + " latence = " + this.getLatency() +
-					" durée = " + duration + " contre joueur: elo = " + summonerEloAdversaire +
+			System.out.println("joueur: id = " + this.getSummonerId() + " elo = " + this.getSummonerElo() + " latence = " + this.getLatency() +
+					" durée = " + duration + " contre joueur: id = " + summonerIdAdversaire + " elo = " + summonerEloAdversaire +
 					" latence = " + latencyAdversaire + " durée = " + durationAdversaire);
 		}
 	}
@@ -76,8 +76,8 @@ public class JoueurImpl implements JoueurItf {
 			recu = br.readLine();
 			tab = recu.split(" ");
 			if (tab[0].equalsIgnoreCase("infoJoueur")) {
-				jouer(Integer.parseInt(tab[1]), Integer.parseInt(tab[2]),
-						Integer.parseInt(tab[3]), Integer.parseInt(tab[4]));
+				jouer(Integer.parseInt(tab[1]), Integer.parseInt(tab[2]), Integer.parseInt(tab[3]),
+						Integer.parseInt(tab[4]), Integer.parseInt(tab[5]));
 			}
 			else {
 				System.out.println("commande inconnue");
