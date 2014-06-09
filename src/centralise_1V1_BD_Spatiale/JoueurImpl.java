@@ -39,9 +39,9 @@ public class JoueurImpl implements JoueurItf {
 		
 		if (!dejaContacte) {
 			dejaContacte = true;
-			System.out.println("joueur: id = " + this.getSummonerId() + " elo = " + this.getSummonerElo() + " latence = " + this.getLatency() +
+			/*System.out.println("joueur: id = " + this.getSummonerId() + " elo = " + this.getSummonerElo() + " latence = " + this.getLatency() +
 					" durée = " + duration + " contre joueur: id = " + summonerIdAdversaire + " elo = " + summonerEloAdversaire +
-					" latence = " + latencyAdversaire + " durée = " + durationAdversaire);
+					" latence = " + latencyAdversaire + " durée = " + durationAdversaire);*/
 		}
 	}
 
@@ -68,8 +68,8 @@ public class JoueurImpl implements JoueurItf {
 			//demande de matchmaking au serveur
 			dos.writeBytes("matchmaking " + summonerId + " " + summonerElo + " " + latency + "\n");
 			//dos.flush();
-			System.out.println("joueur: summonerId = " + summonerId + " summonerElo = " + summonerElo + 
-					" latence = " + latency + " demande de matchmaking au serveur");
+			/*System.out.println("joueur: summonerId = " + summonerId + " summonerElo = " + summonerElo + 
+					" latence = " + latency + " demande de matchmaking au serveur");*/
 			
 			// réception de la réponse du serveur.
 			br = new BufferedReader(new InputStreamReader(s.getInputStream()));

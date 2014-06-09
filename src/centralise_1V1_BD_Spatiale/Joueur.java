@@ -3,6 +3,8 @@ package centralise_1V1_BD_Spatiale;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 
 public class Joueur {
@@ -10,6 +12,7 @@ public class Joueur {
 		FileReader fr;
 		BufferedReader br;
 		String lu;
+		ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(3000);
 		String proprietes[];
 		int summonerId;
 		int summonerElo;
@@ -20,18 +23,15 @@ public class Joueur {
 			// récupération des propriétés des joueurs à partir du ficheir joueur_proprietes.csv			
 			fr = new FileReader("../../M1_SAR/stage_M1/joueurs_proprietes_1V1_summonerId=summonerId.csv");
 			br = new BufferedReader(fr);
-			int i = 0;
-			int nb_threads = Integer.parseInt(arg[0]);
-			while ((lu = br.readLine()) != null && i < nb_threads) {
+			while ((lu = br.readLine()) != null) {
 				proprietes = lu.split(",");
 				summonerId = Integer.parseInt(proprietes[0]);
 				summonerElo = Integer.parseInt(proprietes[1]);
-				latency = (int)Double.parseDouble(proprietes[2]);
+				latency = (int)Double.parseDouble(proprietes[2]); // 11 permet de considèrer la latence au même titre que le elo lorsque l'on considérera la distance
 				// création des joueurs et lancement des joueurs
 				j = new JoueurImpl(summonerId, summonerElo, latency);
 				ThreadJoueur tj = new ThreadJoueur(j);
-				tj.start();
-				i++;
+				scheduler.execute(tj);
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

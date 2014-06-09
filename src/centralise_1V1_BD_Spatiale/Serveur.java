@@ -44,9 +44,7 @@ public class Serveur {
 	    	st.executeUpdate("CREATE TABLE Joueurs(summonerId INTEGER, duration INTEGER, PRIMARY KEY(summonerId))");
 	    	st.executeUpdate("SELECT AddGeometryColumn('Joueurs', 'geom', 4326, 'POINT', 2)");
 	    	st.executeUpdate("CREATE INDEX index_summonerId ON Joueurs(summonerId)");
-	    	st.executeUpdate("SELECT CreateSpatialIndex('Joueurs', 'geom')");
-	    	//st.executeUpdate("SELECT createMbrCache('Joueurs', 'geom')");
-	    	System.out.println("après createMbrCache");
+	    	//st.executeUpdate("SELECT CreateSpatialIndex('Joueurs', 'geom')");
 	    	/*st.executeUpdate("CREATE TRIGGER trigger_geom AFTER INSERT ON Joueurs\n" + 
 	    			"BEGIN\nDECLARE res integer;\n select summonerId into res from Joueurs" + 
 	    			" where NEW.SummonerId <> summonerId and ST_Distance(geom, New.geom) < 20 ORDER BY" +
@@ -62,9 +60,7 @@ public class Serveur {
 	        System.err.println(e.getMessage());
 	    }
 	
-	    System.out.println("avant création de la thread");
-		ThreadServer t = new ThreadServer(joueurs, conn);
-		t.start();
+	    TacheServeur t = new TacheServeur(joueurs, conn);
 		
 		try {
 			ss = new ServerSocket(12345);
@@ -72,7 +68,7 @@ public class Serveur {
 				scom = ss.accept();
 				br = new BufferedReader(new InputStreamReader(scom.getInputStream()));
 				recu = br.readLine();
-				System.out.println(recu);
+				//System.out.println(recu);
 				demandes = recu.split(" ");
 				if (demandes[0].equalsIgnoreCase("matchmaking")) {
 					synchronized (joueurs) {
