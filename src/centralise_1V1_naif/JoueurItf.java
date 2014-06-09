@@ -6,6 +6,8 @@ import java.net.Socket;
 public interface JoueurItf {
 	public void jouer(int duration, int summonerEloAdversaire, int latencyAdversaire, int durationAdversaire);
 	public void match();
+	public int getSummonerId();
+	public void setSummonerId(int summonerId);
 	public int getSummonerElo();
 	public void setSummonerElo(int elo);
 	public int getDuration();

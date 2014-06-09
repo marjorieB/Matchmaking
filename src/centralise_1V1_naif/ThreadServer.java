@@ -1,7 +1,9 @@
 package centralise_1V1_naif;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Timer;
@@ -15,12 +17,16 @@ public class ThreadServer extends Thread {
 	private LinkedList<JoueurItf> l2;
 	private LinkedList<JoueurItf> l3;
 	private Timer timer;
+	private Statistiques stats;
+	private int nb_matchs = 0;
+	private int nb_connexions = 0;
 	
 	public ThreadServer(LinkedList<JoueurItf> liste) {
 		joueurs = liste;
 		l1 = new LinkedList<JoueurItf>();
 		l2 = new LinkedList<JoueurItf>();
 		l3 = new LinkedList<JoueurItf>();
+		this.stats = new Statistiques();
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new TacheServeur(), 0, 3000);
 	}
@@ -36,6 +42,7 @@ public class ThreadServer extends Thread {
 					}
 				}
 				matchmaking(joueurs.getFirst());
+				nb_connexions++;
 				joueurs.removeFirst();				
 			}
 		}
@@ -92,7 +99,7 @@ public class ThreadServer extends Thread {
 				}
 				else {
 					while((tmp = choixJoueur(joueur, res)) == null) {
-						System.out.println("tmp est nul, ce cas ne peut pas arriver!!!");
+						// ce cas ne peut pas se produire
 						l1.remove(tmp);
 						l2.remove(tmp);
 						l3.remove(tmp);
@@ -150,22 +157,27 @@ public class ThreadServer extends Thread {
 	}
 	
 	public void EnvoiInfoJoueur(JoueurItf j1, JoueurItf j2) {
-		DataOutputStream br1;
-		DataOutputStream br2;
+		DataOutputStream dos1;
+		DataOutputStream dos2;
 
+		stats.miseAJour(j1, j2);
 		
 		try {
-			br1 = new DataOutputStream(j1.getSocket().getOutputStream());
-			br2 = new DataOutputStream(j2.getSocket().getOutputStream());
+			dos1 = new DataOutputStream(j1.getSocket().getOutputStream());
+			dos2 = new DataOutputStream(j2.getSocket().getOutputStream());
 			
 			/* on envoi au joueur le temps qu'il a attendu dans la file du serveur
 			 * suivi du summonerElo, de la latence et de la durée dans la file d'attente
 			 * de son adversaire 
 			 */
-			br1.writeBytes("infoJoueur " + j1.getDuration() + " " + j2.getSummonerElo()
+			dos1.writeBytes("infoJoueur " + j1.getDuration() + " " + j2.getSummonerElo()
 					+ " " + j2.getLatency() + " " + j2.getDuration() + "\n");
-			br2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
+			dos2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
 					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
+			nb_matchs += 2;
+			if (nb_connexions == nb_matchs) {
+				stats.afficher_stats();
+			}
 			j1.getSocket().close();
 			j2.getSocket().close();
 		} catch (IOException e) {
@@ -180,7 +192,7 @@ public class ThreadServer extends Thread {
 		
 		@Override
 		public void run() {
-			System.out.println("tache dans run liste de taille " + l3.size());
+			//System.out.println("tache dans run liste de taille " + l3.size());
 			synchronized(joueurs) {
 				for (int i = 0; i < joueurs.size(); i++) {
 					JoueurItf j = joueurs.get(i);
@@ -196,7 +208,7 @@ public class ThreadServer extends Thread {
 					}
 				}
 				if (broad_matchmaking) {
-					System.out.println("appel à broad_matchmaking");
+					//System.out.println("appel à broad_matchmaking");
 					broad_matchmaking();
 					broad_matchmaking = false;
 				}
@@ -218,7 +230,7 @@ public class ThreadServer extends Thread {
 						}
 					}
 				}
-				System.out.println("taille de toMatch = " + toMatch.size());
+				//System.out.println("taille de toMatch = " + toMatch.size());
 				while (toMatch.size() > 1) {
 					min = Integer.MAX_VALUE;
 					joueur = toMatch.getFirst();
@@ -241,8 +253,8 @@ public class ThreadServer extends Thread {
 					l3.remove(ret);
 				}			
 				if (!toMatch.isEmpty()) {
-					if (!l1.isEmpty()) {
-						// il reste normallement uniquement un joueur
+					if (l1.size() > 1) {
+						// il reste normallement uniquement un joueur dans toMatch
 						joueur = toMatch.getFirst();
 						min = Integer.MAX_VALUE;
 							

@@ -16,9 +16,7 @@ public class Serveur {
 		BufferedReader br;
 		String recu;
 		String [] demandes;
-		JoueurItf j;
 		LinkedList<JoueurItf> joueurs = new LinkedList<JoueurItf>();
-	
 		ThreadServer t = new ThreadServer(joueurs);
 		t.start();
 		
@@ -28,11 +26,11 @@ public class Serveur {
 				scom = ss.accept();
 				br = new BufferedReader(new InputStreamReader(scom.getInputStream()));
 				recu = br.readLine();
-				System.out.println(recu);
+				//System.out.println(recu);
 				demandes = recu.split(" ");
 				if (demandes[0].equalsIgnoreCase("matchmaking")) {
 					synchronized (joueurs) {
-						JoueurItf joueur = new JoueurImpl(Integer.parseInt(demandes[1]), Integer.parseInt(demandes[2]), scom);
+						JoueurItf joueur = new JoueurImpl(Integer.parseInt(demandes[1]), Integer.parseInt(demandes[2]), Integer.parseInt(demandes[3]), scom);
 						joueur.setDuration(0);
 						joueurs.add(joueur);
 						joueurs.notify();
@@ -40,7 +38,6 @@ public class Serveur {
 				}
 				else {
 					//erreur
-					System.out.println("fermeture de la socket c'est pour ca qu'après cest null!!!!!!");
 					scom.close();
 				}
 			}

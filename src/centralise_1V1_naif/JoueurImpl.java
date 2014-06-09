@@ -11,6 +11,7 @@ import java.net.UnknownHostException;
 public class JoueurImpl implements JoueurItf {
 	
 	private boolean dejaContacte = false;
+	private int summonerId;
 	private int latency;
 	private int premadeSize; // pour l'instant cette information n'est pas prise en compte,
 							// dans un premier temps en considère des combats 1v1
@@ -19,12 +20,14 @@ public class JoueurImpl implements JoueurItf {
 	private Socket s;
 
 	
-	public JoueurImpl(int summonerElo, int latency) {
+	public JoueurImpl(int summonerId, int summonerElo, int latency) {
+		this.summonerId = summonerId;
 		this.summonerElo = summonerElo;
 		this.latency = latency;
 	}
 
-	public JoueurImpl (int summonerElo, int latency, Socket s) {
+	public JoueurImpl (int summonerId, int summonerElo, int latency, Socket s) {
+		this.summonerId = summonerId;
 		this.summonerElo = summonerElo;
 		this.latency = latency;
 		this.s = s;
@@ -35,9 +38,9 @@ public class JoueurImpl implements JoueurItf {
 		
 		if (!dejaContacte) {
 			dejaContacte = true;
-			System.out.println("joueur: elo = " + this.getSummonerElo() + " latence = " + this.getLatency() +
+			/*System.out.println("joueur: elo = " + this.getSummonerElo() + " latence = " + this.getLatency() +
 					" durée = " + duration + " contre joueur: elo = " + summonerEloAdversaire +
-					" latence = " + latencyAdversaire + " durée = " + durationAdversaire);
+					" latence = " + latencyAdversaire + " durée = " + durationAdversaire);*/
 		}
 	}
 
@@ -62,10 +65,10 @@ public class JoueurImpl implements JoueurItf {
 			os = s.getOutputStream();
 			dos = new DataOutputStream(os);
 			//demande de matchmaking au serveur
-			dos.writeBytes("matchmaking " + summonerElo + " " + latency + "\n");
+			dos.writeBytes("matchmaking " + summonerId + " " + summonerElo + " " + latency + "\n");
 			//dos.flush();
-			System.out.println("joueur: summonerElo = " + summonerElo + 
-					" latence = " + latency + " demande de matchmaking au serveur");
+			/*System.out.println("joueur: summonerElo = " + summonerElo + 
+					" latence = " + latency + " demande de matchmaking au serveur");*/
 			
 			// réception de la réponse du serveur.
 			br = new BufferedReader(new InputStreamReader(s.getInputStream()));
@@ -77,7 +80,7 @@ public class JoueurImpl implements JoueurItf {
 			}
 			else {
 				System.out.println("commande inconnue");
-			}
+			}	
 			s.close();
 			
 		} catch (UnknownHostException e) {
@@ -88,6 +91,16 @@ public class JoueurImpl implements JoueurItf {
 		
 	}
 	
+	
+	
+	public int getSummonerId() {
+		return summonerId;
+	}
+
+	public void setSummonerId(int summonerId) {
+		this.summonerId = summonerId;
+	}
+
 	@Override
 	public int getSummonerElo() {
 		return summonerElo;
