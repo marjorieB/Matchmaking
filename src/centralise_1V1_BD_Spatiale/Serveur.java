@@ -32,7 +32,7 @@ public class Serveur {
 	    	config = new SQLiteConfig();
 	    	config.enableLoadExtension(true);
 
-	    	conn = DriverManager.getConnection("jdbc:sqlite:../../M1_SAR/stage_M1/bd_spatiale.db" ,config.toProperties());
+	    	conn = DriverManager.getConnection("jdbc:sqlite:bd_spatiale.db" ,config.toProperties());
 	    	
 	    	st = conn.createStatement();
 	    	st.execute("SELECT load_extension('/usr/lib/libspatialite.so')");

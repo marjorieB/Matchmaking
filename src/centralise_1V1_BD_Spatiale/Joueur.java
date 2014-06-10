@@ -21,7 +21,7 @@ public class Joueur {
 		
 		try {
 			// récupération des propriétés des joueurs à partir du ficheir joueur_proprietes.csv			
-			fr = new FileReader("../../M1_SAR/stage_M1/joueurs_proprietes_1V1_summonerId=summonerId.csv");
+			fr = new FileReader("../joueurs_proprietes_1V1_acctId=userId.csv");
 			br = new BufferedReader(fr);
 			while ((lu = br.readLine()) != null) {
 				proprietes = lu.split(",");
