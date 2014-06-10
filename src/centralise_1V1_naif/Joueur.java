@@ -8,6 +8,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import externalRessources.RepartitionPingsLatence;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8e1b47e247eeaf19bffe02a7f5a2406904b7ec70
 
 public class Joueur {
 	public static void main(String[] arg) {
@@ -31,6 +35,7 @@ public class Joueur {
 				e.printStackTrace();
 			}
 			br = new BufferedReader(fr);
+<<<<<<< HEAD
 
 			// modif pour la normalisation
 			new RepartitionPingsLatence(br, ids, elos, latencies);
@@ -47,6 +52,15 @@ public class Joueur {
 			}
 			
 		/*	while ((lu = br.readLine()) != null) {
+=======
+			
+			//modif pour la normalisation
+			RepartitionPingsLatence rpl=new RepartitionPingsLatence(br);
+			br=rpl.returnMeTheValues();
+			//fin de la modif
+			
+			while ((lu = br.readLine()) != null) {
+>>>>>>> 8e1b47e247eeaf19bffe02a7f5a2406904b7ec70
 				proprietes = lu.split(",");
 				summonerId = Integer.parseInt(proprietes[0]);
 				summonerElo = Integer.parseInt(proprietes[1]);
