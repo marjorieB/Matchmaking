@@ -44,7 +44,7 @@ public class Serveur {
 	    	st.executeUpdate("CREATE TABLE Joueurs(summonerId INTEGER, duration INTEGER, PRIMARY KEY(summonerId))");
 	    	st.executeUpdate("SELECT AddGeometryColumn('Joueurs', 'geom', 4326, 'POINT', 2)");
 	    	st.executeUpdate("CREATE INDEX index_summonerId ON Joueurs(summonerId)");
-	    	//st.executeUpdate("SELECT CreateSpatialIndex('Joueurs', 'geom')");
+	    	st.executeUpdate("SELECT CreateSpatialIndex('Joueurs', 'geom')");
 	    	/*st.executeUpdate("CREATE TRIGGER trigger_geom AFTER INSERT ON Joueurs\n" + 
 	    			"BEGIN\nDECLARE res integer;\n select summonerId into res from Joueurs" + 
 	    			" where NEW.SummonerId <> summonerId and ST_Distance(geom, New.geom) < 20 ORDER BY" +

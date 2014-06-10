@@ -36,7 +36,7 @@ public class TacheServeur {
 		DataOutputStream br1;
 		DataOutputStream br2;
 		
-		System.out.println("j1 = " + j1.getSummonerId() + " j2 = " + j2.getSummonerId());
+		//System.out.println("j1 = " + j1.getSummonerId() + " j2 = " + j2.getSummonerId());
 				
 		try {
 			//System.out.println("j'envoie a " + j1.getSummonerId());
@@ -70,6 +70,7 @@ public class TacheServeur {
 		public void run() {
 		ResultSet res;
 			int taille = 0;
+			int cpt = 0;
 			
 			try {
 				Statement st = conn.createStatement();
@@ -84,35 +85,35 @@ public class TacheServeur {
 					synchronized (map) {						
 						while (joueurs.isEmpty() && map.isEmpty()) {
 							try {
-								System.out.println("en attente");
 								joueurs.wait();
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
 						}
-						System.out.println("nb joueurs " + joueurs.size());
 						nb_connexions += joueurs.size();
 						taille = joueurs.size();
 						while (!joueurs.isEmpty()) {
 							String requete = "INSERT INTO Joueurs (summonerId, duration, geom)";
-							for (int i = 0; i < 500; i++) {
-								System.out.println(i);
-								if ((i != 499) && (i != taille - 1)) {
+							for (int i = 0; i < 400; i++) {								
+								if ((i != 399) && (cpt != taille - 1)) {
 									requete += "select " + joueurs.getFirst().getSummonerId() + ", 1, " + "ST_GeomFromText('POINT(" + joueurs.getFirst().getSummonerElo() 
 											+ " " + joueurs.getFirst().getLatency() + ")', 4326) UNION ALL ";
 									map.put(new Integer(joueurs.getFirst().getSummonerId()), joueurs.getFirst());
 									joueurs.removeFirst();
+									cpt++;
 								}
 								else {
 									requete += "select " + joueurs.getFirst().getSummonerId() + ", 1, " + "ST_GeomFromText('POINT(" + joueurs.getFirst().getSummonerElo() 
 											+ " " + joueurs.getFirst().getLatency() + ")', 4326);";
 									map.put(new Integer(joueurs.getFirst().getSummonerId()), joueurs.getFirst());
 									joueurs.removeFirst();
+									cpt++;
 									break;
 								}
 							}
 							st.executeUpdate(requete);
 						}
+						cpt = 0;
 					}
 				}
 				matchmaking();
@@ -235,34 +236,78 @@ public class TacheServeur {
 				
 		public void delete() {
 			Statement st; 
-			int tot = 0;
-			int j = 0;
-			String requete = "DELETE FROM Joueurs WHERE";
+			int j = 0;		
 			
-			synchronized (map) {
-				for (Integer i: tmp.keySet()) {
-					j++;
-					map.remove(i);
-					if (j == tmp.size()) {
-						requete += " summonerId = " + tmp.get(i).intValue();
+			if (tmp.size() < 1000) {
+				String requete = "DELETE FROM Joueurs WHERE";
+				
+				synchronized (map) {
+					for (Integer i: tmp.keySet()) {
+						j++;
+						map.remove(i);
+						if (j == tmp.size()) {
+							requete += " summonerId = " + tmp.get(i).intValue();
+						}
+						else {
+							requete += " summonerId = " + tmp.get(i).intValue() + " OR";
+						}
 					}
-					else {
-						requete += " summonerId = " + tmp.get(i).intValue() + " OR";
+					//System.out.println(requete);
+					tmp.clear();
+				}
+				try {
+					st = conn.createStatement();
+					st.executeUpdate(requete);
+					st.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				
+			}
+			else {
+				deleteSup1000();
+			}
+		}
+		
+		public void deleteSup1000() {
+			LinkedList<Integer> liste = new LinkedList<Integer>();
+			int cpt = 0;
+			Statement st; 
+			int taille = tmp.size();
+		
+			for (Integer i: tmp.keySet()) {
+				liste.add(tmp.get(i));
+			}
+			synchronized(map) {
+				while (!liste.isEmpty()) {
+					String requete = "DELETE FROM Joueurs WHERE";
+					for (int i = 0; i < 1000; i++) {
+						
+						if ((i != 999) && (cpt != taille - 1)) {
+							requete += " summonerId = " + liste.getFirst().intValue() + " OR";
+							map.remove(liste.getFirst());
+							liste.removeFirst();
+							cpt++;
+						}
+						else {
+							requete += " summonerId = " + liste.getFirst().intValue();
+							map.remove(liste.getFirst());
+							liste.removeFirst();
+							cpt++;
+							break;
+						}
+					}
+					try {
+						st = conn.createStatement(); 
+						st.executeUpdate(requete);
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
 					}
 				}
-				//System.out.println(requete);
-				tot = tmp.size();
-				tmp.clear();
+				cpt = 0;
 			}
-			try {
-				st = conn.createStatement();
-				int count = st.executeUpdate(requete);
-				//System.out.println("nb delete " + count + " et nombre d'élèment " + tot);
-				st.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-			
+			tmp.clear();
 		}
 		
 	}
