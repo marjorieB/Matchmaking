@@ -7,9 +7,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class RepartitionPingsLatence {
-	ArrayList<Float> elos;
-	ArrayList<Float> latencies;
-	ArrayList<Integer> ids;
+	ArrayList<Float> elos=new ArrayList<>();
+	ArrayList<Float> latencies=new ArrayList<>();
+	ArrayList<Integer> ids=new ArrayList<>();
 	String totalData="";
 	
 	public RepartitionPingsLatence(BufferedReader br) throws NumberFormatException, IOException {
@@ -35,11 +35,11 @@ public class RepartitionPingsLatence {
 		Float maxElo=Collections.max(elos);
 		Float maxLat=Collections.max(latencies);
 		//now let's divide all by this max value
-		for (Float f : elos) elos.set(elos.indexOf(f), f/maxElo);
-		for (Float f : latencies) latencies.set(latencies.indexOf(f), f/maxLat);
+		for (Float f : elos) elos.set(elos.indexOf(f), (f/maxElo)*1000);
+		for (Float f : latencies) latencies.set(latencies.indexOf(f), (f/maxLat)*1000);
 		//now let's watch how it looks
 		//System.out.println("went here");
-		//we are now ready
+		//we are now ready 
 	}
 
 	
@@ -47,7 +47,7 @@ public class RepartitionPingsLatence {
 		if (totalData.length()<10) {
 			for (int i=0;i<ids.size();i++) {
 				int id=ids.get(i);
-				float elo=elos.get(i);
+				int elo=(int)(elos.get(i).floatValue());
 				float latence=latencies.get(i);
 				totalData+=id+","+elo+","+latence+"\n";
 			}

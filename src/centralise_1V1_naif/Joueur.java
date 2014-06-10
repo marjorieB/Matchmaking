@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import externalRessources.RepartitionPingsLatence;
+
 
 public class Joueur {
 	public static void main (String [] arg) {
@@ -27,6 +29,12 @@ public class Joueur {
 			// récupération des propriétés des joueurs à partir du ficheir joueur_proprietes.csv			
 			fr = new FileReader("../joueurs_proprietes_1V1_acctId=userId.csv");
 			br = new BufferedReader(fr);
+			
+			//modif pour la normalisation
+			RepartitionPingsLatence rpl=new RepartitionPingsLatence(br);
+			br=rpl.returnMeTheValues();
+			//fin de la modif
+			
 			while ((lu = br.readLine()) != null) {
 				proprietes = lu.split(",");
 				summonerId = Integer.parseInt(proprietes[0]);
