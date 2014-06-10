@@ -62,7 +62,7 @@ public class JoueurImpl implements JoueurItf {
 		
 		try {
 			s = new Socket("localhost", 12345);
-			s.setSoTimeout(0);
+			//s.setSoTimeout(0);
 			os = s.getOutputStream();
 			dos = new DataOutputStream(os);
 			//demande de matchmaking au serveur
