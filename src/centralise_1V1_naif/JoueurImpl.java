@@ -13,8 +13,8 @@ public class JoueurImpl implements JoueurItf {
 	private boolean dejaContacte = false;
 	private int summonerId;
 	private int latency;
-	private int premadeSize; // pour l'instant cette information n'est pas prise en compte,
-							// dans un premier temps en considère des combats 1v1
+	private int premadeSize; /* pour l'instant cette information n'est pas prise en compte,
+							 dans un premier temps en considère des combats 1v1 */
 	private int summonerElo;
 	private int duration;
 	private Socket s;
@@ -62,16 +62,15 @@ public class JoueurImpl implements JoueurItf {
 		
 		try {
 			s = new Socket("localhost", 12345);
-			//s.setSoTimeout(0);
+			s.setSoTimeout(0);
 			os = s.getOutputStream();
 			dos = new DataOutputStream(os);
-			//demande de matchmaking au serveur
+			// demande de matchmaking au serveur
 			dos.writeBytes("matchmaking " + summonerId + " " + summonerElo + " " + latency + "\n");
-			//dos.flush();
 			/*System.out.println("joueur: summonerElo = " + summonerElo + 
 					" latence = " + latency + " demande de matchmaking au serveur");*/
 			
-			// réception de la réponse du serveur.
+			// réception de la réponse du serveur
 			br = new BufferedReader(new InputStreamReader(s.getInputStream()));
 			recu = br.readLine();
 			tab = recu.split(" ");

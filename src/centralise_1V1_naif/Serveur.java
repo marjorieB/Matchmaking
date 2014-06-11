@@ -26,7 +26,6 @@ public class Serveur {
 				scom = ss.accept();
 				br = new BufferedReader(new InputStreamReader(scom.getInputStream()));
 				recu = br.readLine();
-				//System.out.println(recu);
 				demandes = recu.split(" ");
 				if (demandes[0].equalsIgnoreCase("matchmaking")) {
 					synchronized (joueurs) {
@@ -37,7 +36,7 @@ public class Serveur {
 					}
 				}
 				else {
-					//erreur
+					// erreur
 					scom.close();
 				}
 			}

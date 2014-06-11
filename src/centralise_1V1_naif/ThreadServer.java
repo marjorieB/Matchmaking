@@ -70,7 +70,7 @@ public class ThreadServer extends Thread {
 					if (tmp.getSummonerElo() < joueur.getSummonerElo()) {
 						i++;
 					}
-					// on récupère les joueurs de summonerElo étant égale à plus ou moins 20 unités du summonerElo du joueur passé en paramètre
+					// on récupère les joueurs de summonerElo étant égale à plus ou moins 20 unités du summonerElo du joueur passé en paramètre 
 					if((tmp.getSummonerElo() > (joueur.getSummonerElo() - 20)) &&
 							(tmp.getSummonerElo() < (joueur.getSummonerElo() + 20))) {
 						sl1.add(tmp);
@@ -173,8 +173,15 @@ public class ThreadServer extends Thread {
 			dos2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
 					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
 			nb_matchs += 2;
-			if (nb_connexions == nb_matchs) {
-				stats.afficher_stats();
+			if (nb_connexions%2 == 0) {
+				if (nb_connexions == nb_matchs) {
+					stats.afficher_stats();
+				}
+			}
+			else {
+				if ((nb_connexions - 1) == nb_matchs) {
+					stats.afficher_stats();
+				}
 			}
 			j1.getSocket().close();
 			j2.getSocket().close();

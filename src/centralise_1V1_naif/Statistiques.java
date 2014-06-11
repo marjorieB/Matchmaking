@@ -6,6 +6,8 @@ public class Statistiques {
 	private double sommeDistance;
 	private double sommeTemps;
 	private int nb_joueurs;
+	private int nb_joueurs_duration1;
+	private int nb_joueurs_duration5;
 	private double meilleureDistance;
 	private JoueurItf[] meilleursJoueursDistance;
 	private double meilleurTemps;
@@ -29,6 +31,8 @@ public class Statistiques {
 		sommeDistance = 0;
 		sommeTemps = 0;
 		nb_joueurs = 0;
+		nb_joueurs_duration1 = 0;
+		nb_joueurs_duration5 = 0;
 		meilleureDistance = Double.MAX_VALUE;
 		meilleursJoueursDistance = new JoueurItf[2];
 		meilleurTemps =  Double.MAX_VALUE;
@@ -37,13 +41,13 @@ public class Statistiques {
 		meilleursJoueursLatence = new JoueurItf[2];
 		meilleurEcartSummonerElo = Double.MAX_VALUE;
 		meilleursJoueursSummonerElo = new JoueurItf[2];
-		pireDistance = Double.MIN_VALUE;
+		pireDistance = -1;
 		piresJoueursDistance = new JoueurItf[2];
-		pireTemps = Double.MIN_VALUE;
+		pireTemps = -1;
 		piresJoueursTemps = new JoueurItf[2];	
-		pireEcartLatence = Double.MIN_VALUE;
+		pireEcartLatence = -1;
 		piresJoueursLatence = new JoueurItf[2];
-		pireEcartSummonerElo = Double.MIN_VALUE;
+		pireEcartSummonerElo = -1;
 		piresJoueursSummonerElo = new JoueurItf[2];
 	}
 	
@@ -55,6 +59,9 @@ public class Statistiques {
 		System.out.println("écarts latence moyen " + (sommeEcartsLatence * 2) / nb_joueurs);
 		System.out.println("distance moyenne " + (sommeDistance * 2) / nb_joueurs);
 		System.out.println("temps moyen " + sommeTemps / nb_joueurs);
+		System.out.println("nombre de joueurs matchés directement " + nb_joueurs_duration1);
+		System.out.println("nombre de joueurs matchés au bout de 5 unités de temps " + nb_joueurs_duration5);
+
 
 		System.out.println("meilleure distance " + meilleureDistance + " obtenues par les joueurs : ");
 		System.out.println("\t\t joueur id = " + meilleursJoueursDistance[0].getSummonerId() + " elo = " + meilleursJoueursDistance[0].getSummonerElo() + 
@@ -110,6 +117,19 @@ public class Statistiques {
 		sommeEcartsLatence += ecartsLatence;
 		sommeDistance += distance;
 		sommeTemps += temps;
+		if (j1.getDuration() == 0) {
+			nb_joueurs_duration1++;
+		}
+		if (j2.getDuration() == 0) {
+			nb_joueurs_duration1++;
+		}
+		if (j1.getDuration() == 5) {
+			nb_joueurs_duration5++;
+		}
+		if (j2.getDuration() == 5) {
+			nb_joueurs_duration5++;
+		}
+		
 		if (distance < meilleureDistance) {
 			meilleureDistance = distance;
 			meilleursJoueursDistance[0] = j1;
@@ -119,7 +139,8 @@ public class Statistiques {
 			meilleurTemps = temps;
 			meilleursJoueursTemps[0] = j1;
 			meilleursJoueursTemps[1] = j2;
-		}
+		}		
+
 		if (ecartsSummonerElo < meilleurEcartSummonerElo) {
 			meilleurEcartSummonerElo = ecartsSummonerElo;
 			meilleursJoueursSummonerElo[0] = j1;
