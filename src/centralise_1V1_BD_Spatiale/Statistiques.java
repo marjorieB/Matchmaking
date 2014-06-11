@@ -38,13 +38,13 @@ public class Statistiques {
 		meilleursJoueursLatence = new JoueurItf[2];
 		meilleurEcartSummonerElo = Double.MAX_VALUE;
 		meilleursJoueursSummonerElo = new JoueurItf[2];
-		pireDistance = Double.MIN_VALUE;
+		pireDistance = -1;
 		piresJoueursDistance = new JoueurItf[2];
-		pireTemps = Double.MIN_VALUE;
+		pireTemps = -1;
 		piresJoueursTemps = new JoueurItf[2];	
-		pireEcartLatence = Double.MIN_VALUE;
+		pireEcartLatence = -1;
 		piresJoueursLatence = new JoueurItf[2];
-		pireEcartSummonerElo = Double.MIN_VALUE;
+		pireEcartSummonerElo = -1;
 		piresJoueursSummonerElo = new JoueurItf[2];
 	}
 	

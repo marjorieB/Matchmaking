@@ -20,7 +20,7 @@ public class TacheServeur {
 	private Statistiques stats;
 	private Connection conn;
 	private int nb_connexions = 0;
-	private int nb_matches = 0;
+	private int nb_matchs = 0;
 	
 	public TacheServeur(LinkedList<JoueurItf> liste, Connection conn) {
 		joueurs = liste;
@@ -55,9 +55,16 @@ public class TacheServeur {
 			j1.getSocket().close();
 			j2.getSocket().close();
 			
-			nb_matches += 2;
-			if (nb_matches == nb_connexions) {
-				stats.afficher_stats();
+			nb_matchs += 2;
+			if (nb_connexions%2 == 0) {
+				if (nb_connexions == nb_matchs) {
+					stats.afficher_stats();
+				}
+			}
+			else {
+				if ((nb_connexions - 1) == nb_matchs) {
+					stats.afficher_stats();
+				}
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -281,9 +288,9 @@ public class TacheServeur {
 			synchronized(map) {
 				while (!liste.isEmpty()) {
 					String requete = "DELETE FROM Joueurs WHERE";
-					for (int i = 0; i < 1000; i++) {
+					for (int i = 0; i < 500; i++) {
 						
-						if ((i != 999) && (cpt != taille - 1)) {
+						if ((i != 499) && (cpt != taille - 1)) {
 							requete += " summonerId = " + liste.getFirst().intValue() + " OR";
 							map.remove(liste.getFirst());
 							liste.removeFirst();
