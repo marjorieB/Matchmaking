@@ -36,8 +36,13 @@ public class TacheServeur {
 		DataOutputStream br1;
 		DataOutputStream br2;
 		
+		j1.setDuration(duration1);
+		j2.setDuration(duration2);
+		
 		//System.out.println("j1 = " + j1.getSummonerId() + " j2 = " + j2.getSummonerId());
-				
+		stats.miseAJour(j1, j2);
+	
+		
 		try {
 			//System.out.println("j'envoie a " + j1.getSummonerId());
 			br1 = new DataOutputStream(j1.getSocket().getOutputStream());
@@ -213,8 +218,7 @@ public class TacheServeur {
 			Statement st;
 			ResultSet res;
 			boolean flag = false;
-			
-			
+						
 			try {
 				st = conn.createStatement();
 				res = st.executeQuery("SELECT J1.summonerId id1, J2.summonerId id2, J1.duration, J2.duration FROM Joueurs J1, Joueurs J2 " + 

@@ -14,7 +14,7 @@ public class Joueur {
 		FileReader fr;
 		BufferedReader br;
 		String lu;
-		ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(3000);
+		ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(500);
 		String proprietes[];
 		int summonerId;
 		int summonerElo;
