@@ -66,13 +66,14 @@ public class Serveur {
 			ss = new ServerSocket(12345);
 			while (true) {
 				scom = ss.accept();
+				scom.setSoTimeout(0);
 				br = new BufferedReader(new InputStreamReader(scom.getInputStream()));
 				recu = br.readLine();
 				//System.out.println(recu);
 				demandes = recu.split(" ");
 				if (demandes[0].equalsIgnoreCase("matchmaking")) {
 					synchronized (joueurs) {
-						JoueurItf joueur = new JoueurImpl(Integer.parseInt(demandes[1]), Integer.parseInt(demandes[2]), Integer.parseInt(demandes[3]), scom);
+						JoueurItf joueur = new JoueurImpl(Integer.parseInt(demandes[1]), Integer.parseInt(demandes[2]), Integer.parseInt(demandes[3]), scom, System.currentTimeMillis());
 						joueur.setDuration(0);
 						joueurs.add(joueur);
 						joueurs.notify();

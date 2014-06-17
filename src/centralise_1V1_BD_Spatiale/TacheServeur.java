@@ -38,6 +38,8 @@ public class TacheServeur {
 		
 		j1.setDuration(duration1);
 		j2.setDuration(duration2);
+		j1.setTime2(System.currentTimeMillis());
+		j2.setTime2(System.currentTimeMillis());
 		
 		//System.out.println("j1 = " + j1.getSummonerId() + " j2 = " + j2.getSummonerId());
 		stats.miseAJour(j1, j2);
