@@ -25,7 +25,7 @@ public class Joueur {
 
 			// récupération des propriétés des joueurs à partir du ficheir
 			// joueur_proprietes.csv
-			fr = new FileReader("../joueurs_proprietes_1V1_acctId=userId.csv");
+			fr = new FileReader("../joueurs_props_newDB.csv");
 			br = new BufferedReader(fr);
 			while ((lu = br.readLine()) != null) {
 				proprietes = lu.split(",");
