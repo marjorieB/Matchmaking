@@ -16,5 +16,8 @@ public interface JoueurItf {
 	public void setLatency(int latency);
 	public Socket getSocket();
 	public void setSocket(Socket s);
+	public void setTime2(long currentTimeMillis);
+	public long getTime1();
+	public long getTime2();
 }
 

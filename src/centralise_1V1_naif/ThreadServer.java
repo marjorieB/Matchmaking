@@ -157,6 +157,9 @@ public class ThreadServer extends Thread {
 	public void EnvoiInfoJoueur(JoueurItf j1, JoueurItf j2) {
 		DataOutputStream dos1;
 		DataOutputStream dos2;
+		
+		j1.setTime2(System.currentTimeMillis());
+		j2.setTime2(System.currentTimeMillis());
 
 		stats.miseAJour(j1, j2);
 		

@@ -18,6 +18,8 @@ public class JoueurImpl implements JoueurItf {
 	private int summonerElo;
 	private int duration;
 	private Socket s;
+	private long time1 = 0;
+	private long time2 = 0;
 
 	
 	public JoueurImpl(int summonerId, int summonerElo, int latency) {
@@ -26,11 +28,12 @@ public class JoueurImpl implements JoueurItf {
 		this.latency = latency;
 	}
 
-	public JoueurImpl (int summonerId, int summonerElo, int latency, Socket s) {
+	public JoueurImpl (int summonerId, int summonerElo, int latency, Socket s, long time1) {
 		this.summonerId = summonerId;
 		this.summonerElo = summonerElo;
 		this.latency = latency;
 		this.s = s;
+		this.time1 = time1;
 	}
 	
 	@Override
@@ -137,5 +140,20 @@ public class JoueurImpl implements JoueurItf {
 
 	public void setSocket(Socket s) {
 		this.s = s;
+	}
+
+	@Override
+	public void setTime2(long time2) {
+		this.time2 = time2; 
+	}
+
+	@Override
+	public long getTime1() {
+		return time1;
+	}
+
+	@Override
+	public long getTime2() {
+		return time2;
 	}
 }
