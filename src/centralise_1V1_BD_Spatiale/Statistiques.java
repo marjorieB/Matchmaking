@@ -7,6 +7,8 @@ public class Statistiques {
 	private double sommeEcartsLatence;
 	private double sommeDistance;
 	private double sommeTemps;
+	private double tempsDeb;
+	private double tempsFin;
 	private int nb_joueurs;
 	private int nb_joueurs_duration1;
 	private int nb_joueurs_duration5;
@@ -37,6 +39,8 @@ public class Statistiques {
 		sommeEcartsLatence = 0;
 		sommeDistance = 0;
 		sommeTemps = 0;
+		tempsDeb = System.currentTimeMillis();
+		tempsFin = 0;
 		nb_joueurs = 0;
 		nb_joueurs_duration1 = 0;
 		nb_joueurs_duration5 = 0;
@@ -64,6 +68,7 @@ public class Statistiques {
 	}
 	
 	public void afficher_stats() {
+		tempsFin = System.currentTimeMillis();
 		double distanceMoyenne = (sommeDistance * 2) / nb_joueurs;
 		// calcul de la variance
 		for (Float f: tab) {
@@ -74,6 +79,7 @@ public class Statistiques {
 		System.out.println("================================== STATISTIQUES ==================================");
 		
 		System.out.println("statistiques effectuées sur " + nb_joueurs + " joueurs");
+		System.out.println("temps total d'exécution pour matcher les " + nb_joueurs + " joueurs = " + convert(tempsFin - tempsDeb));
 		System.out.println("écarts summonerElo moyen " + (sommeEcartsSummonerElo * 2) / nb_joueurs);
 		System.out.println("écarts latence moyen " + (sommeEcartsLatence * 2) / nb_joueurs);
 		System.out.println("distance moyenne " + (sommeDistance * 2) / nb_joueurs);
@@ -207,5 +213,20 @@ public class Statistiques {
 			piresJoueursLatence[0] = j1;
 			piresJoueursLatence[1] = j2;
 		}
+	}
+	
+	
+	public String convert (double ms) {
+		String res;
+		double millisecondes = ms % 1000; 
+		ms = ms / 1000; 
+		double secondes = ms % 60; 
+		ms = ms / 60; 
+		double minutes = ms % 60; 
+		ms = ms / 60; 
+		double heures = ms;
+		
+		res = (int)heures + " h " + (int)minutes + " min " + (int)secondes + " s " + (int)millisecondes + " ms";
+		return res;
 	}
 }
