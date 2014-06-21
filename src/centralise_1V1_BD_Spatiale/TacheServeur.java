@@ -17,6 +17,7 @@ public class TacheServeur {
 	private HashMap<Integer, JoueurItf> map;
 	private HashMap<Integer, Integer> tmp;
 	private Timer timer;
+	private double tempsDeb = 0;
 	private Statistiques stats;
 	private Connection conn;
 	private int nb_connexions = 0;
@@ -65,12 +66,12 @@ public class TacheServeur {
 			nb_matchs += 2;
 			if (nb_connexions%2 == 0) {
 				if (nb_connexions == nb_matchs) {
-					stats.afficher_stats();
+					stats.afficher_stats(tempsDeb);
 				}
 			}
 			else {
 				if ((nb_connexions - 1) == nb_matchs) {
-					stats.afficher_stats();
+					stats.afficher_stats(tempsDeb);
 				}
 			}
 		} catch (IOException e) {
@@ -79,10 +80,13 @@ public class TacheServeur {
 	}
 	
 	
-	public class TacheInterneServeur extends TimerTask {		
+	public class TacheInterneServeur extends TimerTask {	
+		boolean first = true;
+
+		
 		@Override
 		public void run() {
-		ResultSet res;
+			ResultSet res;
 			int taille = 0;
 			int cpt = 0;
 			
@@ -103,6 +107,10 @@ public class TacheServeur {
 							} catch (InterruptedException e) {
 								e.printStackTrace();
 							}
+						}
+						if (first) {
+							tempsDeb = System.currentTimeMillis();
+							first = false;							
 						}
 						nb_connexions += joueurs.size();
 						taille = joueurs.size();
