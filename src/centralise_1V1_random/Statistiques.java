@@ -7,7 +7,6 @@ public class Statistiques {
 	private double sommeEcartsLatence;
 	private double sommeDistance;
 	private double sommeTemps;
-	private double tempsDeb;
 	private double tempsFin;
 	private int nb_joueurs;
 	private int nb_joueurs_duration1;
@@ -18,7 +17,7 @@ public class Statistiques {
 	private double meilleureDistance;
 	private JoueurItf[] meilleursJoueursDistance;
 	private double meilleurTemps;
-	private JoueurItf[] meilleursJoueursTemps;
+	private JoueurItf meilleurJoueurTemps;
 	private double meilleurEcartLatence;
 	private JoueurItf[] meilleursJoueursLatence;
 	private double meilleurEcartSummonerElo;
@@ -26,7 +25,7 @@ public class Statistiques {
 	private double pireDistance;
 	private JoueurItf[] piresJoueursDistance;
 	private double pireTemps;
-	private JoueurItf[] piresJoueursTemps;	
+	private JoueurItf pireJoueurTemps;	
 	private double pireEcartLatence;
 	private JoueurItf[] piresJoueursLatence;
 	private double pireEcartSummonerElo;
@@ -39,7 +38,6 @@ public class Statistiques {
 		sommeEcartsLatence = 0;
 		sommeDistance = 0;
 		sommeTemps = 0;
-		tempsDeb = System.currentTimeMillis();
 		tempsFin = 0;
 		nb_joueurs = 0;
 		nb_joueurs_duration1 = 0;
@@ -50,7 +48,6 @@ public class Statistiques {
 		meilleureDistance = Double.MAX_VALUE;
 		meilleursJoueursDistance = new JoueurItf[2];
 		meilleurTemps =  Double.MAX_VALUE;
-		meilleursJoueursTemps = new JoueurItf[2];
 		meilleurEcartLatence = Double.MAX_VALUE;
 		meilleursJoueursLatence = new JoueurItf[2];
 		meilleurEcartSummonerElo = Double.MAX_VALUE;
@@ -58,7 +55,6 @@ public class Statistiques {
 		pireDistance = -1;
 		piresJoueursDistance = new JoueurItf[2];
 		pireTemps = -1;
-		piresJoueursTemps = new JoueurItf[2];	
 		pireEcartLatence = -1;
 		piresJoueursLatence = new JoueurItf[2];
 		pireEcartSummonerElo = -1;
@@ -67,7 +63,7 @@ public class Statistiques {
 		variance = 0;
 	}
 	
-	public void afficher_stats() {
+	public void afficher_stats(double tempsDeb) {
 		tempsFin = System.currentTimeMillis();
 		double distanceMoyenne = (sommeDistance * 2) / nb_joueurs;
 		// calcul de la variance
@@ -94,43 +90,41 @@ public class Statistiques {
 		System.out.println("nombre de joueurs dont la distance de matche est supérieure à 100 = " + nbJoueursMatches100);
 		
 
-		System.out.println("meilleure distance " + meilleureDistance + " obtenues par les joueurs : ");
+		System.out.println("meilleure distance " + meilleureDistance + " obtenue par les joueurs : ");
 		System.out.println("\t\t joueur id = " + meilleursJoueursDistance[0].getSummonerId() + " elo = " + meilleursJoueursDistance[0].getSummonerElo() + 
 				" latence " + meilleursJoueursDistance[0].getLatency() + " duration = " + meilleursJoueursDistance[0].getDuration());
 		System.out.println("\t\t joueur id = " + meilleursJoueursDistance[1].getSummonerId() + " elo = " + meilleursJoueursDistance[1].getSummonerElo() + 
 				" latence " + meilleursJoueursDistance[1].getLatency() + " duration = " + meilleursJoueursDistance[1].getDuration());
-		System.out.println("meilleure temps " + meilleurTemps + " obtenues par les joueurs : ");
-		System.out.println("\t\t joueur id = " + meilleursJoueursTemps[0].getSummonerId() + " elo = " + meilleursJoueursTemps[0].getSummonerElo() + 
-				" latence " + meilleursJoueursTemps[0].getLatency() + " duration = " + meilleursJoueursTemps[0].getDuration());
-		System.out.println("\t\t joueur id = " + meilleursJoueursTemps[1].getSummonerId() + " elo = " + meilleursJoueursTemps[1].getSummonerElo() + 
-				" latence " + meilleursJoueursTemps[1].getLatency() + " duration = " + meilleursJoueursTemps[1].getDuration());	
-		System.out.println("meilleur écart de latence " + meilleurEcartLatence + " obtenues par les joueurs : ");
+		System.out.println("meilleur temps " + convert(meilleurTemps) + " obtenu par le joueur : ");
+		System.out.println("\t\t joueur id = " + meilleurJoueurTemps.getSummonerId() + " elo = " + meilleurJoueurTemps.getSummonerElo() + 
+				" latence " + meilleurJoueurTemps.getLatency() + " duration = " + meilleurJoueurTemps.getDuration() + 
+				" temps début " + meilleurJoueurTemps.getTime1() + " ms temps fin " + meilleurJoueurTemps.getTime2() + " ms");
+		System.out.println("meilleur écart de latence " + meilleurEcartLatence + " obtenu par les joueurs : ");
 		System.out.println("\t\t joueur id = " + meilleursJoueursLatence[0].getSummonerId() + " elo = " + meilleursJoueursLatence[0].getSummonerElo() + 
 				" latence " + meilleursJoueursLatence[0].getLatency() + " duration = " + meilleursJoueursLatence[0].getDuration());
 		System.out.println("\t\t joueur id = " + meilleursJoueursLatence[1].getSummonerId() + " elo = " + meilleursJoueursLatence[1].getSummonerElo() + 
 				" latence " + meilleursJoueursLatence[1].getLatency() + " duration = " + meilleursJoueursLatence[1].getDuration());
-		System.out.println("meilleur écart summonerElo " + meilleurEcartSummonerElo + " obtenues par les joueurs : ");
+		System.out.println("meilleur écart summonerElo " + meilleurEcartSummonerElo + " obtenu par les joueurs : ");
 		System.out.println("\t\t joueur id = " + meilleursJoueursSummonerElo[0].getSummonerId() + " elo = " + meilleursJoueursSummonerElo[0].getSummonerElo() + 
 				" latence " + meilleursJoueursSummonerElo[0].getLatency() + " duration = " + meilleursJoueursSummonerElo[0].getDuration());
 		System.out.println("\t\t joueur id = " + meilleursJoueursSummonerElo[1].getSummonerId() + " elo = " + meilleursJoueursSummonerElo[1].getSummonerElo() + 
 				" latence " + meilleursJoueursSummonerElo[1].getLatency() + " duration = " + meilleursJoueursSummonerElo[1].getDuration());		
 		
-		System.out.println("pire distance " + pireDistance + " obtenues par les joueurs : ");
+		System.out.println("pire distance " + pireDistance + " obtenu par les joueurs : ");
 		System.out.println("\t\t joueur id = " + piresJoueursDistance[0].getSummonerId() + " elo = " + piresJoueursDistance[0].getSummonerElo() + 
 				" latence " + piresJoueursDistance[0].getLatency() + " duration = " + piresJoueursDistance[0].getDuration());
 		System.out.println("\t\t joueur id = " + piresJoueursDistance[1].getSummonerId() + " elo = " + piresJoueursDistance[1].getSummonerElo() + 
 				" latence " + piresJoueursDistance[1].getLatency() + " duration = " +piresJoueursDistance[1].getDuration());
-		System.out.println("pire temps " + pireTemps + " obtenues par les joueurs : ");
-		System.out.println("\t\t joueur id = " + piresJoueursTemps[0].getSummonerId() + " elo = " + piresJoueursTemps[0].getSummonerElo() + 
-				" latence " + piresJoueursTemps[0].getLatency() + " duration = " + piresJoueursTemps[0].getDuration());
-		System.out.println("\t\t joueur id = " + piresJoueursTemps[1].getSummonerId() + " elo = " + piresJoueursTemps[1].getSummonerElo() + 
-				" latence " + piresJoueursTemps[1].getLatency() + " duration = " + piresJoueursTemps[1].getDuration());
-		System.out.println("pire écart de latence " + pireEcartLatence + " obtenues par les joueurs : ");
+		System.out.println("pire temps " + convert(pireTemps) + " obtenu par le joueur : ");
+		System.out.println("\t\t joueur id = " + pireJoueurTemps.getSummonerId() + " elo = " + pireJoueurTemps.getSummonerElo() + 
+				" latence " + pireJoueurTemps.getLatency() + " duration = " + pireJoueurTemps.getDuration() + 
+				" temps début " + pireJoueurTemps.getTime1() + " ms temps fin " + pireJoueurTemps.getTime2() + " ms");
+		System.out.println("pire écart de latence " + pireEcartLatence + " obtenu par les joueurs : ");
 		System.out.println("\t\t joueur id = " + piresJoueursLatence[0].getSummonerId() + " elo = " + piresJoueursLatence[0].getSummonerElo() + 
 				" latence " + piresJoueursLatence[0].getLatency() + " duration = " + piresJoueursLatence[0].getDuration());
 		System.out.println("\t\t joueur id = " + piresJoueursLatence[1].getSummonerId() + " elo = " + piresJoueursLatence[1].getSummonerElo() + 
 				" latence " + piresJoueursLatence[1].getLatency() + " duration = " + piresJoueursLatence[1].getDuration());
-		System.out.println("pire écart summonerElo " + pireEcartSummonerElo + " obtenues par les joueurs : ");
+		System.out.println("pire écart summonerElo " + pireEcartSummonerElo + " obtenu par les joueurs : ");
 		System.out.println("\t\t joueur id = " + piresJoueursSummonerElo[0].getSummonerId() + " elo = " + piresJoueursSummonerElo[0].getSummonerElo() + 
 				" latence " + piresJoueursSummonerElo[0].getLatency() + " duration = " + piresJoueursSummonerElo[0].getDuration());
 		System.out.println("\t\t joueur id = " + piresJoueursSummonerElo[1].getSummonerId() + " elo = " + piresJoueursSummonerElo[1].getSummonerElo() + 
@@ -142,6 +136,8 @@ public class Statistiques {
 		double ecartsLatence = Math.abs(j1.getLatency() - j2.getLatency());
 		double distance = Math.sqrt(Math.pow((j1.getSummonerElo() - j2.getSummonerElo()), 2) + Math.pow((j1.getLatency() - j2.getLatency()), 2));
 		double temps = Math.abs(j1.getTime2() - j1.getTime1() + j2.getTime2() - j2.getTime1());
+		double temps1 = j1.getTime2() - j1.getTime1();
+		double temps2 = j2.getTime2() - j2.getTime1();
 		
 		nb_joueurs += 2;
 		sommeEcartsSummonerElo += ecartsSummonerElo;
@@ -177,11 +173,14 @@ public class Statistiques {
 			meilleursJoueursDistance[0] = j1;
 			meilleursJoueursDistance[1] = j2;
 		}
-		if (temps < meilleurTemps) {
-			meilleurTemps = temps;
-			meilleursJoueursTemps[0] = j1;
-			meilleursJoueursTemps[1] = j2;
-		}		
+		if (temps1 < meilleurTemps) {
+			meilleurTemps = temps1;
+			meilleurJoueurTemps = j1;
+		}
+		if (temps2 < meilleurTemps) {
+			meilleurTemps = temps2;			
+			meilleurJoueurTemps = j2;
+		}
 
 		if (ecartsSummonerElo < meilleurEcartSummonerElo) {
 			meilleurEcartSummonerElo = ecartsSummonerElo;
@@ -198,10 +197,13 @@ public class Statistiques {
 			piresJoueursDistance[0] = j1;
 			piresJoueursDistance[1] = j2;
 		}
-		if (temps > pireTemps) {
-			pireTemps = temps;
-			piresJoueursTemps[0] = j1;
-			piresJoueursTemps[1] = j2;
+		if (temps1 > pireTemps) {
+			pireTemps = temps1;
+			pireJoueurTemps = j1;
+		}
+		if (temps2 > pireTemps) {
+			pireTemps = temps2;
+			pireJoueurTemps = j2;
 		}
 		if (ecartsSummonerElo > pireEcartSummonerElo) {
 			pireEcartSummonerElo = ecartsSummonerElo;

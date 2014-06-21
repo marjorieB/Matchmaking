@@ -14,7 +14,7 @@ public class Joueur {
 		FileReader fr;
 		BufferedReader br;
 		String lu;
-		ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(500);
+		ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(2200);
 		String proprietes[];
 		int summonerId;
 		int summonerElo;
@@ -24,10 +24,11 @@ public class Joueur {
 		try {
 
 			// récupération des propriétés des joueurs à partir du ficheir
-			// joueur_proprietes.csv
 			fr = new FileReader("../joueurs_props_newDB.csv");
 			br = new BufferedReader(fr);
-			while ((lu = br.readLine()) != null) {
+			int i = 0;
+			while ((lu = br.readLine()) != null && i < 100000) {
+				i++;
 				proprietes = lu.split(",");
 				summonerId = Integer.parseInt(proprietes[0]);
 				summonerElo = Integer.parseInt(proprietes[1]);

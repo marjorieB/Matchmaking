@@ -13,6 +13,7 @@ public class ThreadServer extends Thread {
 	private LinkedList<JoueurItf> joueurs;
 	private Statistiques stats;
 	private int nb_matchs = 0;
+	private double tempsDeb = 0;
 	private int nb_connexions = 0;
 	
 	public ThreadServer(LinkedList<JoueurItf> liste) {
@@ -21,9 +22,14 @@ public class ThreadServer extends Thread {
 	}
 	
 	public void run () {
+		boolean first = true;
 		while (true) {
 			synchronized(joueurs) {
 				while (joueurs.size() >= 2) {
+					if (first) {
+						tempsDeb = System.currentTimeMillis();
+						first = false;
+					}
 					nb_connexions += 2;
 					EnvoiInfoJoueur(joueurs.remove(), joueurs.remove());
 				}
@@ -53,8 +59,8 @@ public class ThreadServer extends Thread {
 			dos2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
 					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
 			nb_matchs += 2;
-			if (nb_matchs == 499840) { // a ajuster en fonction du nombre de joueurs dans le fichier csv
-				stats.afficher_stats();
+			if (nb_matchs == 100000) { // a ajuster en fonction du nombre de joueurs dans le fichier csv
+				stats.afficher_stats(tempsDeb);
 			}
 			/*if (nb_connexions%2 == 0) {
 				if (nb_connexions == nb_matchs) {
