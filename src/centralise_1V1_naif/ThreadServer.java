@@ -16,6 +16,7 @@ public class ThreadServer extends Thread {
 	private LinkedList<JoueurItf> l3;
 	private Timer timer;
 	private Statistiques stats;
+	private double tempsDeb = 0;
 	private int nb_matchs = 0;
 	private int nb_connexions = 0;
 	
@@ -30,6 +31,7 @@ public class ThreadServer extends Thread {
 	}
 	
 	public void run () {
+		boolean first = true;
 		while (true) {
 			synchronized(joueurs) {
 				while (joueurs.isEmpty()) {
@@ -38,6 +40,10 @@ public class ThreadServer extends Thread {
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}
+				}
+				if (first) {
+					tempsDeb = System.currentTimeMillis();
+					first = false;
 				}
 				matchmaking(joueurs.getFirst());
 				nb_connexions++;
@@ -178,12 +184,12 @@ public class ThreadServer extends Thread {
 			nb_matchs += 2;
 			if (nb_connexions%2 == 0) {
 				if (nb_connexions == nb_matchs) {
-					stats.afficher_stats();
+					stats.afficher_stats(tempsDeb);
 				}
 			}
 			else {
 				if ((nb_connexions - 1) == nb_matchs) {
-					stats.afficher_stats();
+					stats.afficher_stats(tempsDeb);
 				}
 			}
 			j1.getSocket().close();
