@@ -33,6 +33,7 @@ public class Statistiques {
 	private ArrayList<Float> tab;
 	private double variance;
 	
+	
 	public Statistiques() {
 		sommeEcartsSummonerElo = 0;
 		sommeEcartsLatence = 0;
@@ -71,7 +72,7 @@ public class Statistiques {
 			variance += Math.pow(f.doubleValue() - distanceMoyenne, 2);
 		}
 		variance = variance * 2 / nb_joueurs;
-		
+				
 		System.out.println("================================== STATISTIQUES ==================================");
 		
 		System.out.println("statistiques effectuées sur " + nb_joueurs + " joueurs");
@@ -81,7 +82,7 @@ public class Statistiques {
 		System.out.println("distance moyenne " + (sommeDistance * 2) / nb_joueurs);
 		System.out.println("variance de la distance = " + variance);
 		System.out.println("écart-type de la distance = " + Math.sqrt(variance));
-		System.out.println("temps moyen " + sommeTemps / nb_joueurs + " ms");
+		System.out.println("temps moyen " + convert(sommeTemps / nb_joueurs));
 		System.out.println("ratio temps sur la distance = " + (sommeTemps * 2 / sommeDistance));
 		System.out.println("nombre de joueurs matchés directement " + nb_joueurs_duration1);
 		System.out.println("nombre de joueurs matchés au bout de 5 unités de temps " + nb_joueurs_duration5);
@@ -145,16 +146,16 @@ public class Statistiques {
 		sommeDistance += distance;
 		tab.add(new Float(distance));
 		sommeTemps += temps;
-		if (j1.getDuration() == 0) {
+		if (temps1 < 3000) {
 			nb_joueurs_duration1++;
 		}
-		if (j2.getDuration() == 0) {
+		if (temps2 < 3000) {
 			nb_joueurs_duration1++;
 		}
-		if (j1.getDuration() >= 5) {
+		if (temps1 >= 15000) {
 			nb_joueurs_duration5++;
 		}
-		if (j2.getDuration() >= 5) {
+		if (temps2 >= 15000) {
 			nb_joueurs_duration5++;
 		}
 		

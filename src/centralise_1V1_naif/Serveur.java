@@ -19,6 +19,7 @@ public class Serveur {
 		LinkedList<JoueurItf> joueurs = new LinkedList<JoueurItf>();
 		ThreadServer t = new ThreadServer(joueurs);
 		t.start();
+				
 		
 		try {
 			ss = new ServerSocket(12345);
@@ -45,5 +46,5 @@ public class Serveur {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		
-	}
+	}	
 }

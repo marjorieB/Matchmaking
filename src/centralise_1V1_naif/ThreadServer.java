@@ -18,6 +18,7 @@ public class ThreadServer extends Thread {
 	private Statistiques stats;
 	private double tempsDeb = 0;
 	private int nb_matchs = 0;
+	private int nb_connexions_tot = 0;
 	private int nb_connexions = 0;
 	
 	public ThreadServer(LinkedList<JoueurItf> liste) {
@@ -28,6 +29,7 @@ public class ThreadServer extends Thread {
 		this.stats = new Statistiques();
 		timer = new Timer();
 		timer.scheduleAtFixedRate(new TacheServeur(), 0, 3000);
+		timer.scheduleAtFixedRate(new TacheConnexions(), 0, 1000);	
 	}
 	
 	public void run () {
@@ -46,6 +48,7 @@ public class ThreadServer extends Thread {
 					first = false;
 				}
 				matchmaking(joueurs.getFirst());
+				nb_connexions_tot++;
 				nb_connexions++;
 				joueurs.removeFirst();				
 			}
@@ -182,13 +185,13 @@ public class ThreadServer extends Thread {
 			dos2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
 					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
 			nb_matchs += 2;
-			if (nb_connexions%2 == 0) {
-				if (nb_connexions == nb_matchs) {
+			if (nb_connexions_tot%2 == 0) {
+				if (nb_connexions_tot == nb_matchs) {
 					stats.afficher_stats(tempsDeb);
 				}
 			}
 			else {
-				if ((nb_connexions - 1) == nb_matchs) {
+				if ((nb_connexions_tot - 1) == nb_matchs) {
 					stats.afficher_stats(tempsDeb);
 				}
 			}
@@ -291,6 +294,17 @@ public class ThreadServer extends Thread {
 						l3.remove(ret);
 					}
 				}
+			}
+		}
+	}
+	
+	public class TacheConnexions extends TimerTask{
+
+		@Override
+		public void run() {
+			synchronized(joueurs) {	
+				System.out.println("nombre de connexions " + nb_connexions);
+				nb_connexions = 0;
 			}
 		}
 	}
