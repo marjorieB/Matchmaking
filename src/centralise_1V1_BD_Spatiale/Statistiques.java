@@ -152,10 +152,17 @@ public class Statistiques {
 		if (temps2 < 3000) {
 			nb_joueurs_duration1++;
 		}
+<<<<<<< HEAD
 		if (temps1 >= 15000) {
 			nb_joueurs_duration5++;
 		}
 		if (temps2 >= 15000) {
+=======
+		if (j1.getDuration() >= 5) {
+			nb_joueurs_duration5++;
+		}
+		if (j2.getDuration() >= 5) {
+>>>>>>> 80f5606b5187f21299bbfb90fb11551d80af2a61
 			nb_joueurs_duration5++;
 		}
 		

@@ -151,10 +151,10 @@ public class Statistiques {
 		if (j2.getDuration() == 0) {
 			nb_joueurs_duration1++;
 		}
-		if (j1.getDuration() == 5) {
+		if (j1.getDuration() >= 5) {
 			nb_joueurs_duration5++;
 		}
-		if (j2.getDuration() == 5) {
+		if (j2.getDuration() >= 5) {
 			nb_joueurs_duration5++;
 		}
 		
