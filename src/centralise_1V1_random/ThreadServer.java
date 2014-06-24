@@ -15,9 +15,12 @@ public class ThreadServer extends Thread {
 	private int nb_matchs = 0;
 	private double tempsDeb = 0;
 	private int nb_connexions = 0;
+	private Timer timer;
 	
 	public ThreadServer(LinkedList<JoueurItf> liste) {
 		joueurs = liste;
+		timer = new Timer();
+		timer.scheduleAtFixedRate(new TacheConnexions(), 0, 1000);
 		this.stats = new Statistiques();
 	}
 	
@@ -77,5 +80,17 @@ public class ThreadServer extends Thread {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}	
+	}
+	
+	public class TacheConnexions extends TimerTask {
+
+		@Override
+		public void run() {
+			synchronized(joueurs) {
+				System.out.println("nombre de connexions " + nb_connexions);
+				nb_connexions = 0;
+			}
+		}
+		
+	}
 }
