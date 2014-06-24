@@ -35,8 +35,10 @@ public class Serveur {
 	    	conn = DriverManager.getConnection("jdbc:sqlite:bd_spatiale.db" ,config.toProperties());
 	    	
 	    	st = conn.createStatement();
-	    	st.execute("SELECT load_extension('../../stage/libspatialite.so.3.0.0')");
+	    	//st.execute("SELECT load_extension('../../stage/libspatialite.so.3.0.0')");
+	    	st.execute("SELECT load_extension('/usr/lib/libspatialite.so')");
 
+	    	
 	    	st.execute("SELECT InitSpatialMetadata()");
 	    	st.execute("INSERT OR IGNORE INTO spatial_ref_sys (srid, auth_name, auth_srid, ref_sys_name, proj4text)" +
 	    			" VALUES (4326, 'moi', 4326, 'WGS84', '+proh=longlat +ellps=WGS84 +datum=WGS84 +no_defs')");

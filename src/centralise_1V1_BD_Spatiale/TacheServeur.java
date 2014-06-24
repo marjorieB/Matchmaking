@@ -17,10 +17,14 @@ public class TacheServeur {
 	private HashMap<Integer, JoueurItf> map;
 	private HashMap<Integer, Integer> tmp;
 	private Timer timer;
+	private Timer timer1;
 	private double tempsDeb = 0;
 	private Statistiques stats;
 	private Connection conn;
+	private int nb_connexions_tot = 0;
 	private int nb_connexions = 0;
+	private boolean connexions_first = true;
+	private boolean connexions_second = true;
 	private int nb_matchs = 0;
 	
 	public TacheServeur(LinkedList<JoueurItf> liste, Connection conn) {
@@ -28,8 +32,10 @@ public class TacheServeur {
 		map = new HashMap<Integer, JoueurItf>();
 		tmp = new HashMap<Integer, Integer>();
 		timer = new Timer();
-		stats = new Statistiques();
 		timer.scheduleAtFixedRate(new TacheInterneServeur(), 0, 3000);
+		timer1 = new Timer();
+		timer1.scheduleAtFixedRate(new TacheConnexions(), 0, 1000);
+		stats = new Statistiques();
 		this.conn = conn;
 	}
 	
@@ -64,13 +70,13 @@ public class TacheServeur {
 			j2.getSocket().close();
 			
 			nb_matchs += 2;
-			if (nb_connexions%2 == 0) {
-				if (nb_connexions == nb_matchs) {
+			if (nb_connexions_tot%2 == 0) {
+				if (nb_connexions_tot == nb_matchs) {
 					stats.afficher_stats(tempsDeb);
 				}
 			}
 			else {
-				if ((nb_connexions - 1) == nb_matchs) {
+				if ((nb_connexions_tot - 1) == nb_matchs) {
 					stats.afficher_stats(tempsDeb);
 				}
 			}
@@ -112,7 +118,7 @@ public class TacheServeur {
 							tempsDeb = System.currentTimeMillis();
 							first = false;							
 						}
-						nb_connexions += joueurs.size();
+						nb_connexions_tot += joueurs.size();
 						taille = joueurs.size();
 						while (!joueurs.isEmpty()) {
 							String requete = "INSERT INTO Joueurs (summonerId, duration, geom)";
@@ -329,6 +335,35 @@ public class TacheServeur {
 				cpt = 0;
 			}
 			tmp.clear();
+		}
+		
+	}
+	
+	public class TacheConnexions extends TimerTask {
+
+		@Override
+		public void run() {
+			synchronized(joueurs) {
+				if (connexions_first) {
+					connexions_first = false;
+					nb_connexions = joueurs.size();
+					System.out.println("nombre de connexions " + nb_connexions);
+				}
+				else {
+					if (connexions_second) {
+						connexions_second = false;
+						System.out.println("nombre de connexions " + (joueurs.size() - nb_connexions));
+						nb_connexions = joueurs.size();
+					}
+					else {
+						connexions_first = true;
+						connexions_second = true;
+						System.out.println("nombre de connexions " + (joueurs.size() - nb_connexions));
+						nb_connexions = 0;
+					}
+				}
+				
+			}
 		}
 		
 	}
