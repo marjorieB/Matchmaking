@@ -1,6 +1,7 @@
 package centralise_1V1_naif;
 
 import java.io.DataOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -14,6 +15,9 @@ public class ThreadServer extends Thread {
 	private LinkedList<JoueurItf> l1;
 	private LinkedList<JoueurItf> l2;
 	private LinkedList<JoueurItf> l3;
+	private TacheServeur ts;
+	private FileWriter fw;
+	private TacheConnexions tc;
 	private Timer timer;
 	private Statistiques stats;
 	private double tempsDeb = 0;
@@ -22,14 +26,21 @@ public class ThreadServer extends Thread {
 	private int nb_connexions = 0;
 	
 	public ThreadServer(LinkedList<JoueurItf> liste) {
+		try {
+			fw = new FileWriter("nb_connexions_par_seconde_naif");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		joueurs = liste;
 		l1 = new LinkedList<JoueurItf>();
 		l2 = new LinkedList<JoueurItf>();
 		l3 = new LinkedList<JoueurItf>();
 		this.stats = new Statistiques();
+		ts = new TacheServeur();
+		tc = new TacheConnexions();
 		timer = new Timer();
-		timer.scheduleAtFixedRate(new TacheServeur(), 0, 3000);
-		timer.scheduleAtFixedRate(new TacheConnexions(), 0, 1000);	
+		timer.scheduleAtFixedRate(ts, 0, 3000);
+		timer.scheduleAtFixedRate(tc, 0, 1000);	
 	}
 	
 	public void run () {
@@ -49,6 +60,9 @@ public class ThreadServer extends Thread {
 				}
 				matchmaking(joueurs.getFirst());
 				nb_connexions_tot++;
+				/*if (nb_connexions_tot == 100000) {
+					tc.cancel();
+				}*/ 
 				nb_connexions++;
 				joueurs.removeFirst();				
 			}
@@ -187,11 +201,15 @@ public class ThreadServer extends Thread {
 			nb_matchs += 2;
 			if (nb_connexions_tot%2 == 0) {
 				if (nb_connexions_tot == nb_matchs) {
+					ts.cancel();
+					tc.cancel();
 					stats.afficher_stats(tempsDeb);
 				}
 			}
 			else {
 				if ((nb_connexions_tot - 1) == nb_matchs) {
+					ts.cancel();
+					tc.cancel();
 					stats.afficher_stats(tempsDeb);
 				}
 			}
@@ -303,7 +321,14 @@ public class ThreadServer extends Thread {
 		@Override
 		public void run() {
 			synchronized(joueurs) {	
-				System.out.println("nombre de connexions " + nb_connexions);
+				try {
+					fw.write("nombre de connexions " + nb_connexions + "\n");
+					fw.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//System.out.println("nombre de connexions " + nb_connexions);
 				nb_connexions = 0;
 			}
 		}
