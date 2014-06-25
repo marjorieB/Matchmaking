@@ -323,7 +323,6 @@ public class TacheServeur {
 				try {
 					fw.write("nombre de connexions " + nb_connexions.getNb_connexions() + "\n");
 					fw.flush();
-					System.out.println("nb connexions " + nb_connexions.getNb_connexions());
 					nb_connexions.setNb_connexions(0);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
