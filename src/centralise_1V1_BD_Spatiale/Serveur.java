@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 
+import org.omg.CORBA.IntHolder;
 import org.sqlite.SQLiteConfig;
 
 public class Serveur {
@@ -24,6 +25,7 @@ public class Serveur {
 		String [] demandes;
 		SQLiteConfig config;
 		Statement st;
+		NbConnexions nb_connexions = new NbConnexions();
 		LinkedList<JoueurItf> joueurs = new LinkedList<JoueurItf>();
 		Connection conn = null;
 			
@@ -62,7 +64,7 @@ public class Serveur {
 	        System.err.println(e.getMessage());
 	    }
 	
-	    new TacheServeur(joueurs, conn);
+	    new TacheServeur(joueurs, conn, nb_connexions);
 		
 		try {
 			ss = new ServerSocket(12345);
@@ -75,6 +77,7 @@ public class Serveur {
 				demandes = recu.split(" ");
 				if (demandes[0].equalsIgnoreCase("matchmaking")) {
 					synchronized (joueurs) {
+						nb_connexions.setNb_connexions(nb_connexions.getNb_connexions() + 1);
 						JoueurItf joueur = new JoueurImpl(Integer.parseInt(demandes[1]), Integer.parseInt(demandes[2]), Integer.parseInt(demandes[3]), scom, System.currentTimeMillis());
 						joueur.setDuration(0);
 						joueurs.add(joueur);

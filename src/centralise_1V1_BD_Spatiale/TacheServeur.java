@@ -26,12 +26,10 @@ public class TacheServeur {
 	private Connection conn;
 	private FileWriter fw;
 	private int nb_connexions_tot = 0;
-	private int nb_connexions = 0;
-	private boolean connexions_first = true;
-	private boolean connexions_second = true;
+	private NbConnexions nb_connexions;
 	private int nb_matchs = 0;
 	
-	public TacheServeur(LinkedList<JoueurItf> liste, Connection conn) {
+	public TacheServeur(LinkedList<JoueurItf> liste, Connection conn, NbConnexions nb_connexions) {
 		joueurs = liste;
 		this.conn = conn;
 		map = new HashMap<Integer, JoueurItf>();
@@ -41,12 +39,13 @@ public class TacheServeur {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		this.nb_connexions = nb_connexions;
 		tis = new TacheInterneServeur();
 		tc = new TacheConnexions();
 		timer = new Timer();
 		timer.scheduleAtFixedRate(tis, 0, 3000);
-		//timer1 = new Timer();
-		timer.scheduleAtFixedRate(tc, 0, 1000);
+		timer1 = new Timer();
+		timer1.scheduleAtFixedRate(tc, 0, 1000);
 		stats = new Statistiques();
 	}
 	
@@ -320,42 +319,15 @@ public class TacheServeur {
 		@Override
 		public void run() {
 			synchronized(joueurs) {
-				if (connexions_first) {
-					connexions_first = false;
-					nb_connexions = joueurs.size();
-					try {
-						fw.write("nombre de connexions " + nb_connexions + "\n");
-						fw.flush();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					//System.out.println("nombre de connexions " + nb_connexions);
-				}
-				else {
-					if (connexions_second) {
-						connexions_second = false;
-						try {
-							fw.write("nombre de connexions " + (joueurs.size() - nb_connexions) + "\n");
-							fw.flush();
-						} catch (IOException e) {
-							e.printStackTrace();
-						}
-						//System.out.println("nombre de connexions " + (joueurs.size() - nb_connexions));
-						nb_connexions = joueurs.size();
-					}
-					else {
-						connexions_first = true;
-						connexions_second = true;
-						try {
-							fw.write("nombre de connexions " + (joueurs.size() - nb_connexions) + "\n");
-							fw.flush();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-						//System.out.println("nombre de connexions " + (joueurs.size() - nb_connexions));
-						nb_connexions = 0;
-					}
+			
+				try {
+					fw.write("nombre de connexions " + nb_connexions.getNb_connexions() + "\n");
+					fw.flush();
+					System.out.println("nb connexions " + nb_connexions.getNb_connexions());
+					nb_connexions.setNb_connexions(0);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		}
