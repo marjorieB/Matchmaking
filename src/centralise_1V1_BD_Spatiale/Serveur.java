@@ -35,7 +35,8 @@ public class Serveur {
 	    	conn = DriverManager.getConnection("jdbc:sqlite:bd_spatiale.db" ,config.toProperties());
 	    	
 	    	st = conn.createStatement();
-	    	st.execute("SELECT load_extension('../../stage/libspatialite.so.3.0.0')");
+	    	//st.execute("SELECT load_extension('../../stage/libspatialite.so.3.0.0')");
+	    	st.execute("SELECT load_extension('/usr/lib/libspatialite.so')");
 
 	    	
 	    	st.execute("SELECT InitSpatialMetadata()");
@@ -61,7 +62,7 @@ public class Serveur {
 	        System.err.println(e.getMessage());
 	    }
 	
-	    TacheServeur t = new TacheServeur(joueurs, conn);
+	    new TacheServeur(joueurs, conn);
 		
 		try {
 			ss = new ServerSocket(12345);

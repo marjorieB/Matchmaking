@@ -1,6 +1,7 @@
 package centralise_1V1_BD_Spatiale;
 
 import java.io.DataOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -19,8 +20,11 @@ public class TacheServeur {
 	private Timer timer;
 	private Timer timer1;
 	private double tempsDeb = 0;
+	private TacheInterneServeur tis;
+	private TacheConnexions tc;
 	private Statistiques stats;
 	private Connection conn;
+	private FileWriter fw;
 	private int nb_connexions_tot = 0;
 	private int nb_connexions = 0;
 	private boolean connexions_first = true;
@@ -29,14 +33,21 @@ public class TacheServeur {
 	
 	public TacheServeur(LinkedList<JoueurItf> liste, Connection conn) {
 		joueurs = liste;
+		this.conn = conn;
 		map = new HashMap<Integer, JoueurItf>();
 		tmp = new HashMap<Integer, Integer>();
+		try {
+			fw = new FileWriter("nb_connexions_par_seconde_BD_spatiale");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		tis = new TacheInterneServeur();
+		tc = new TacheConnexions();
 		timer = new Timer();
-		timer.scheduleAtFixedRate(new TacheInterneServeur(), 0, 3000);
-		timer1 = new Timer();
-		timer1.scheduleAtFixedRate(new TacheConnexions(), 0, 1000);
+		timer.scheduleAtFixedRate(tis, 0, 3000);
+		//timer1 = new Timer();
+		timer.scheduleAtFixedRate(tc, 0, 1000);
 		stats = new Statistiques();
-		this.conn = conn;
 	}
 	
 	public void EnvoiInfoJoueur(JoueurItf j1, int duration1, JoueurItf j2, int duration2) {
@@ -72,11 +83,15 @@ public class TacheServeur {
 			nb_matchs += 2;
 			if (nb_connexions_tot%2 == 0) {
 				if (nb_connexions_tot == nb_matchs) {
+					tis.cancel();
+					tc.cancel();
 					stats.afficher_stats(tempsDeb);
 				}
 			}
 			else {
 				if ((nb_connexions_tot - 1) == nb_matchs) {
+					tis.cancel();
+					tc.cancel();
 					stats.afficher_stats(tempsDeb);
 				}
 			}
@@ -119,6 +134,9 @@ public class TacheServeur {
 							first = false;							
 						}
 						nb_connexions_tot += joueurs.size();
+						/*if (nb_connexions_tot == 100000) {
+							tc.cancel();
+						}*/
 						taille = joueurs.size();
 						while (!joueurs.isEmpty()) {
 							String requete = "INSERT INTO Joueurs (summonerId, duration, geom)";
@@ -145,47 +163,6 @@ public class TacheServeur {
 					}
 				}
 				matchmaking();
-							
-							
-					/*		for (int j = 0; j < (int)((joueurs.size() / 300) + 1); j++) {
-								int i = 0;
-								System.out.println("joueurs.size() "+ joueurs.size() + " valeur de j = " + j + " valeur max de j = " + (int)((joueurs.size() / 500) + 1));
-								String requete = "INSERT INTO Joueurs (summonerId, duration, geom)";
-
-								while (true) {
-									System.out.println("cpt = " + cpt + " joueurs size = " + joueurs.size() + " i = " + i);
-									if (cpt == joueurs.size() - 1 || i == 299) {
-										System.out.println("on est la");
-										requete += "select " + joueurs.get(cpt).getSummonerId() + ", 1, " + "ST_GeomFromText('POINT(" + joueurs.get(cpt).getSummonerElo() 
-												+ " " + joueurs.get(cpt).getLatency() + ")', 4326)";
-										map.put(new Integer(joueurs.get(cpt).getSummonerId()), joueurs.get(cpt));
-										i++;
-										cpt += 1;
-										break;
-										
-									}
-									else {
-										requete += "select " + joueurs.get(cpt).getSummonerId() + ", 1, " + "ST_GeomFromText('POINT(" + joueurs.get(cpt).getSummonerElo() 
-												+ " " + joueurs.get(cpt).getLatency() + ")', 4326) UNION ALL ";
-										map.put(new Integer(joueurs.get(cpt).getSummonerId()), joueurs.get(cpt));
-										i++;
-										cpt += 1;
-									}									
-								}
-								System.out.println("après break");
-								st.executeUpdate(requete);
-								System.out.println("la requete a été exécutée");
-							}
-						}
-						System.out.println("je suis maintenant la");
-						joueurs.removeAll(joueurs);
-						cpt = 0;
-					}	
-				}
-				
-				matchmaking();*/
-						
-				
 				
 				// test pour savoir si des joueurs ont attendus dans la file d'attente depuis trop longtemps
 				// traitement approprié en conséquence
@@ -258,7 +235,6 @@ public class TacheServeur {
 				e.printStackTrace();
 			}			
 		}
-		
 		
 				
 		public void delete() {
@@ -347,24 +323,41 @@ public class TacheServeur {
 				if (connexions_first) {
 					connexions_first = false;
 					nb_connexions = joueurs.size();
-					System.out.println("nombre de connexions " + nb_connexions);
+					try {
+						fw.write("nombre de connexions " + nb_connexions + "\n");
+						fw.flush();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					//System.out.println("nombre de connexions " + nb_connexions);
 				}
 				else {
 					if (connexions_second) {
 						connexions_second = false;
-						System.out.println("nombre de connexions " + (joueurs.size() - nb_connexions));
+						try {
+							fw.write("nombre de connexions " + (joueurs.size() - nb_connexions) + "\n");
+							fw.flush();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						//System.out.println("nombre de connexions " + (joueurs.size() - nb_connexions));
 						nb_connexions = joueurs.size();
 					}
 					else {
 						connexions_first = true;
 						connexions_second = true;
-						System.out.println("nombre de connexions " + (joueurs.size() - nb_connexions));
+						try {
+							fw.write("nombre de connexions " + (joueurs.size() - nb_connexions) + "\n");
+							fw.flush();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						//System.out.println("nombre de connexions " + (joueurs.size() - nb_connexions));
 						nb_connexions = 0;
 					}
 				}
-				
 			}
 		}
-		
 	}
 }
