@@ -1,6 +1,7 @@
 package centralise_1V1_random;
 
 import java.io.DataOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -12,15 +13,23 @@ import java.util.TimerTask;
 public class ThreadServer extends Thread {
 	private LinkedList<JoueurItf> joueurs;
 	private Statistiques stats;
+	private FileWriter fw;
 	private int nb_matchs = 0;
 	private double tempsDeb = 0;
 	private int nb_connexions = 0;
+	private TacheConnexions tc;
 	private Timer timer;
 	
 	public ThreadServer(LinkedList<JoueurItf> liste) {
 		joueurs = liste;
+		try {
+			fw = new FileWriter("nb_connexions_par_seconde_random");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		tc = new TacheConnexions();
 		timer = new Timer();
-		timer.scheduleAtFixedRate(new TacheConnexions(), 0, 1000);
+		timer.scheduleAtFixedRate(tc, 0, 1000);
 		this.stats = new Statistiques();
 	}
 	
@@ -34,6 +43,9 @@ public class ThreadServer extends Thread {
 						first = false;
 					}
 					nb_connexions += 2;
+					/*if (nb_connexions == 100000) {
+						tc.cancel();
+					}*/
 					EnvoiInfoJoueur(joueurs.remove(), joueurs.remove());
 				}
 			}
@@ -63,6 +75,7 @@ public class ThreadServer extends Thread {
 					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
 			nb_matchs += 2;
 			if (nb_matchs == 100000) { // a ajuster en fonction du nombre de joueurs dans le fichier csv
+				tc.cancel();
 				stats.afficher_stats(tempsDeb);
 			}
 			/*if (nb_connexions%2 == 0) {
@@ -87,7 +100,14 @@ public class ThreadServer extends Thread {
 		@Override
 		public void run() {
 			synchronized(joueurs) {
-				System.out.println("nombre de connexions " + nb_connexions);
+				try {
+					fw.write("nombre de connexions " + nb_connexions + "\n");
+					fw.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				//System.out.println("nombre de connexions " + nb_connexions);
 				nb_connexions = 0;
 			}
 		}
