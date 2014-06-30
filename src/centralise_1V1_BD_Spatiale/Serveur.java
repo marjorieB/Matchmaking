@@ -15,6 +15,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.LinkedList;
 
+import org.omg.CORBA.IntHolder;
 import org.sqlite.SQLiteConfig;
 
 public class Serveur {

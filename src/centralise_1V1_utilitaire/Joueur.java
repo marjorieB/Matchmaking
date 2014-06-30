@@ -22,7 +22,6 @@ public class Joueur {
 		int summonerElo;
 		int latency;
 		JoueurItf j;
-		Objet obj = new Objet();
 		ArrayList<ThreadJoueur> tab = new ArrayList<ThreadJoueur>();
 
 		try {
@@ -39,21 +38,10 @@ public class Joueur {
 				latency = (int) Double.parseDouble(proprietes[2]);
 				// création des joueurs et lancement des joueurs
 				j = new JoueurImpl(summonerId, summonerElo, latency);
-				ThreadJoueur tj = new ThreadJoueur(j, obj);
+				ThreadJoueur tj = new ThreadJoueur(j);
 				tab.add(tj);
 				scheduler.execute(tj);
 			}
-			for (int k = 0; k < 100000; k++) {
-				synchronized (obj) {
-					try {
-						obj.wait();
-						System.out.println(k);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			System.exit(0);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
