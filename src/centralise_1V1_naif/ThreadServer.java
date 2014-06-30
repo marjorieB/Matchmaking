@@ -8,6 +8,9 @@ import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import centralise_1V1_utilitaire.Stats;
+import centralise_1V1_utilitaire.*;
+
 
 
 public class ThreadServer extends Thread {
@@ -19,15 +22,15 @@ public class ThreadServer extends Thread {
 	private FileWriter fw;
 	private TacheConnexions tc;
 	private Timer timer;
-	private Statistiques stats;
-	private double tempsDeb = 0;
+	private Stats stats;
+	private long tempsDeb = 0;
 	private int nb_matchs = 0;
 	private int nb_connexions_tot = 0;
 	private int nb_connexions = 0;
 	
-	public ThreadServer(LinkedList<JoueurItf> liste) {
+	public ThreadServer(LinkedList<JoueurItf> liste, String arg) {
 		try {
-			fw = new FileWriter("nb_connexions_par_seconde_naif");
+			fw = new FileWriter("nb_connexions_par_seconde_naif" + arg + ".csv");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -35,7 +38,7 @@ public class ThreadServer extends Thread {
 		l1 = new LinkedList<JoueurItf>();
 		l2 = new LinkedList<JoueurItf>();
 		l3 = new LinkedList<JoueurItf>();
-		this.stats = new Statistiques();
+		this.stats = new Stats(arg, "naif");
 		ts = new TacheServeur();
 		tc = new TacheConnexions();
 		timer = new Timer();
@@ -199,19 +202,27 @@ public class ThreadServer extends Thread {
 			dos2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
 					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
 			nb_matchs += 2;
-			if (nb_connexions_tot%2 == 0) {
+			/*if (nb_connexions_tot%2 == 0) {
 				if (nb_connexions_tot == nb_matchs) {
 					ts.cancel();
 					tc.cancel();
-					stats.afficher_stats(tempsDeb);
+					//stats.afficher_stats(tempsDeb);
+					stats.fin(tempsDeb);
 				}
 			}
 			else {
 				if ((nb_connexions_tot - 1) == nb_matchs) {
 					ts.cancel();
 					tc.cancel();
-					stats.afficher_stats(tempsDeb);
+					//stats.afficher_stats(tempsDeb);
+					stats.fin(tempsDeb);
 				}
+			}*/
+			if (nb_matchs == 100000) {
+				ts.cancel();
+				tc.cancel();
+				stats.fin(tempsDeb);
+				System.exit(0);
 			}
 			j1.getSocket().close();
 			j2.getSocket().close();
@@ -322,7 +333,7 @@ public class ThreadServer extends Thread {
 		public void run() {
 			synchronized(joueurs) {	
 				try {
-					fw.write("nombre de connexions " + nb_connexions + "\n");
+					fw.write(nb_connexions + "\n");
 					fw.flush();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

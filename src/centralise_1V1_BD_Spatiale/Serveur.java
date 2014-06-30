@@ -2,6 +2,9 @@ package centralise_1V1_BD_Spatiale;
 
 
 import java.io.BufferedReader;
+
+import centralise_1V1_utilitaire.*;
+
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
@@ -64,11 +67,14 @@ public class Serveur {
 	        System.err.println(e.getMessage());
 	    }
 	
-	    new TacheServeur(joueurs, conn, nb_connexions);
+	    TacheServeur t = new TacheServeur(joueurs, conn, nb_connexions, args[0]);
 		
 		try {
 			ss = new ServerSocket(12345);
 			while (true) {
+				if (nb_connexions.getNb_connexions() == 100000) {
+					break;
+				}
 				scom = ss.accept();
 				scom.setSoTimeout(0);
 				br = new BufferedReader(new InputStreamReader(scom.getInputStream()));
@@ -90,7 +96,13 @@ public class Serveur {
 					scom.close();
 				}
 			}
-			
+			try {
+				t.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.exit(0);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}		

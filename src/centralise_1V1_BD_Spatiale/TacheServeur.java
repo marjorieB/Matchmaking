@@ -12,30 +12,31 @@ import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import centralise_1V1_utilitaire.*;
 
-public class TacheServeur {
+public class TacheServeur extends Thread {
 	private LinkedList<JoueurItf> joueurs;
 	private HashMap<Integer, JoueurItf> map;
 	private HashMap<Integer, Integer> tmp;
 	private Timer timer;
 	private Timer timer1;
-	private double tempsDeb = 0;
+	private long tempsDeb = 0;
 	private TacheInterneServeur tis;
 	private TacheConnexions tc;
-	private Statistiques stats;
+	private Stats stats;
 	private Connection conn;
 	private FileWriter fw;
 	private int nb_connexions_tot = 0;
 	private NbConnexions nb_connexions;
 	private int nb_matchs = 0;
 	
-	public TacheServeur(LinkedList<JoueurItf> liste, Connection conn, NbConnexions nb_connexions) {
+	public TacheServeur(LinkedList<JoueurItf> liste, Connection conn, NbConnexions nb_connexions, String arg) {
 		joueurs = liste;
 		this.conn = conn;
 		map = new HashMap<Integer, JoueurItf>();
 		tmp = new HashMap<Integer, Integer>();
 		try {
-			fw = new FileWriter("nb_connexions_par_seconde_BD_spatiale");
+			fw = new FileWriter("nb_connexions_par_seconde_BD_spatiale" + arg + ".csv");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -46,7 +47,7 @@ public class TacheServeur {
 		timer.scheduleAtFixedRate(tis, 0, 3000);
 		timer1 = new Timer();
 		timer1.scheduleAtFixedRate(tc, 0, 1000);
-		stats = new Statistiques();
+		stats = new Stats(arg, "BD_Spatiale");
 	}
 	
 	public void EnvoiInfoJoueur(JoueurItf j1, int duration1, JoueurItf j2, int duration2) {
@@ -80,19 +81,25 @@ public class TacheServeur {
 			j2.getSocket().close();
 			
 			nb_matchs += 2;
-			if (nb_connexions_tot%2 == 0) {
+			/*if (nb_connexions_tot%2 == 0) {
 				if (nb_connexions_tot == nb_matchs) {
 					tis.cancel();
 					tc.cancel();
-					stats.afficher_stats(tempsDeb);
+					stats.fin(tempsDeb);
 				}
 			}
 			else {
 				if ((nb_connexions_tot - 1) == nb_matchs) {
 					tis.cancel();
 					tc.cancel();
-					stats.afficher_stats(tempsDeb);
+					stats.fin(tempsDeb);
 				}
+			}*/
+			if (nb_matchs == 100000) {
+				tis.cancel();
+				tc.cancel();
+				stats.fin(tempsDeb);
+				System.exit(0);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -321,9 +328,8 @@ public class TacheServeur {
 			synchronized(joueurs) {
 			
 				try {
-					fw.write("nombre de connexions " + nb_connexions.getNb_connexions() + "\n");
+					fw.write(nb_connexions.getNb_connexions() + "\n");
 					fw.flush();
-					System.out.println("nb connexions " + nb_connexions.getNb_connexions());
 					nb_connexions.setNb_connexions(0);
 				} catch (IOException e) {
 					// TODO Auto-generated catch block

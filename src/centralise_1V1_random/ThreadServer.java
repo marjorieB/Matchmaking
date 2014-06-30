@@ -7,30 +7,31 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
+import centralise_1V1_utilitaire.*;
 
 
 
 public class ThreadServer extends Thread {
 	private LinkedList<JoueurItf> joueurs;
-	private Statistiques stats;
+	private Stats stats;
 	private FileWriter fw;
 	private int nb_matchs = 0;
-	private double tempsDeb = 0;
+	private long tempsDeb = 0;
 	private int nb_connexions = 0;
 	private TacheConnexions tc;
 	private Timer timer;
 	
-	public ThreadServer(LinkedList<JoueurItf> liste) {
+	public ThreadServer(LinkedList<JoueurItf> liste, String arg) {
 		joueurs = liste;
 		try {
-			fw = new FileWriter("nb_connexions_par_seconde_random");
+			fw = new FileWriter("nb_connexions_par_seconde_random"+ arg + ".csv");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		tc = new TacheConnexions();
 		timer = new Timer();
 		timer.scheduleAtFixedRate(tc, 0, 1000);
-		this.stats = new Statistiques();
+		this.stats = new Stats(arg, "random");
 	}
 	
 	public void run () {
@@ -74,9 +75,11 @@ public class ThreadServer extends Thread {
 			dos2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
 					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
 			nb_matchs += 2;
+			System.out.println("nb_matches" + nb_matchs);
 			if (nb_matchs == 100000) { // a ajuster en fonction du nombre de joueurs dans le fichier csv
 				tc.cancel();
-				stats.afficher_stats(tempsDeb);
+				stats.fin(tempsDeb);
+				System.exit(0);
 			}
 			/*if (nb_connexions%2 == 0) {
 				if (nb_connexions == nb_matchs) {
@@ -101,7 +104,7 @@ public class ThreadServer extends Thread {
 		public void run() {
 			synchronized(joueurs) {
 				try {
-					fw.write("nombre de connexions " + nb_connexions + "\n");
+					fw.write(nb_connexions + "\n");
 					fw.flush();
 				} catch (IOException e) {
 					// TODO Auto-generated catch block
