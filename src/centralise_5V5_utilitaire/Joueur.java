@@ -26,7 +26,7 @@ public class Joueur {
 
 		try {
 
-			// récupération des propriétés des joueurs à partir du ficheir
+			// récupération des propriétés des joueurs à partir du fichier
 			fr = new FileReader("../joueurs_props_newDB.csv");
 			br = new BufferedReader(fr);
 			int i = 0;

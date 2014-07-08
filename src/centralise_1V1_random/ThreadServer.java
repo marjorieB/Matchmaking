@@ -75,6 +75,7 @@ public class ThreadServer extends Thread {
 			dos2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
 					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
 			nb_matchs += 2;
+			System.out.println("nb_matches" + nb_matchs);
 			if (nb_matchs == 100000) { // a ajuster en fonction du nombre de joueurs dans le fichier csv
 				tc.cancel();
 				stats.fin(tempsDeb);
