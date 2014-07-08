@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetAddress;
-import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
@@ -68,9 +67,8 @@ public class JoueurImpl implements JoueurItf {
 		
 		
 		try {
-			//InetAddress addr = InetAddress.getByName("132.227.199.23");
- 			//s = new Socket(addr, 12345);
-			s = new Socket("localhost", 12345);
+			InetAddress addr = InetAddress.getByName("132.227.199.23");
+ 			s = new Socket(addr, 12345);
 			s.setSoTimeout(0);
 			os = s.getOutputStream();
 			dos = new DataOutputStream(os);

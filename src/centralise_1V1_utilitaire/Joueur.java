@@ -1,11 +1,8 @@
 package centralise_1V1_utilitaire;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -16,7 +13,7 @@ public class Joueur {
 		FileReader fr;
 		BufferedReader br;
 		String lu;
-		ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(800);
+		ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(1500);
 		String proprietes[];
 		int summonerId;
 		int summonerElo;

@@ -4,7 +4,6 @@ import java.io.DataOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
-import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
 import centralise_1V1_utilitaire.*;
@@ -75,9 +74,15 @@ public class ThreadServer extends Thread {
 			dos2.writeBytes("InfoJoueur "  + j2.getDuration() + " " + j1.getSummonerElo()
 					+ " " + j1.getLatency() + " " + j1.getDuration() + "\n");
 			nb_matchs += 2;
-			System.out.println("nb_matches" + nb_matchs);
 			if (nb_matchs == 100000) { // a ajuster en fonction du nombre de joueurs dans le fichier csv
 				tc.cancel();
+				try {
+					fw.write(nb_connexions + "\n");
+					fw.flush();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				stats.fin(tempsDeb);
 				System.exit(0);
 			}
