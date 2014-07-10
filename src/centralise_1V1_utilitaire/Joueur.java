@@ -13,7 +13,7 @@ public class Joueur {
 		FileReader fr;
 		BufferedReader br;
 		String lu;
-		ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(1500);
+		ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor(2200);
 		String proprietes[];
 		int summonerId;
 		int summonerElo;
@@ -23,7 +23,7 @@ public class Joueur {
 
 		try {
 
-			// récupération des propriétés des joueurs à partir du ficheir
+			// récupération des propriétés des joueurs à partir du fichier
 			fr = new FileReader("../joueurs_props_newDB.csv");
 			br = new BufferedReader(fr);
 			int i = 0;

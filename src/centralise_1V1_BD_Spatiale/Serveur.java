@@ -32,8 +32,7 @@ public class Serveur {
 		LinkedList<JoueurItf> joueurs = new LinkedList<JoueurItf>();
 		Connection conn = null;
 		TacheConnexions tc = new TacheConnexions(nb_connexions, args[0]);
-		Timer timer = new Timer();
-		timer.scheduleAtFixedRate(tc, 0, 1000);
+		tc.start();
 		
 	    try {
 	    	Class.forName("org.sqlite.JDBC");
@@ -70,9 +69,7 @@ public class Serveur {
 	        System.err.println(e.getMessage());
 	    }
 	
-	    TacheServeur t = new TacheServeur(joueurs, conn, nb_connexions, args[0]);
-	    t.setPriority(Thread.MIN_PRIORITY);
-	    
+	    TacheServeur t = new TacheServeur(joueurs, conn, args[0]);	    
 	    
 		try {
 			ss = new ServerSocket(12345);
