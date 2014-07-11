@@ -46,12 +46,9 @@ public class ThreadServer extends Thread {
 						first = false;
 					}
 					nb_connexions += 10;
-					System.out.println("taille joueurs " + joueurs.size());
 					for (int i = 0; i < 10; i++) {
 						joueurs10.add(joueurs.remove());
 					}
-					System.out.println("taille de joueurs10 " + joueurs10.size());
-					System.out.println("taille joueurs " + joueurs.size());
 					formeEquipe(joueurs10);
 				}
 			}
@@ -66,9 +63,6 @@ public class ThreadServer extends Thread {
 		JoueurItf e1 = null;
 		JoueurItf e2 = null;
 		
-		
-		System.out.println("taille de joueurs10 " + equipes.size());
-
 		for (int i = 0; i < equipes.size(); i++) {
 			double min = Double.MAX_VALUE;
 			if (!team1.containsKey(equipes.get(i).getSummonerId()) && 
@@ -93,22 +87,17 @@ public class ThreadServer extends Thread {
 					((sum2 < sum1) && ((e2.getSummonerElo() + e2.getLatency()) < (e1.getSummonerElo() + e1.getLatency())))) {
 				sum1 += e2.getSummonerElo() + e2.getLatency();
 				team1.put(new Integer(e2.getSummonerId()), e2);
-				System.out.println("insertion dans team1 de " + e2.getSummonerId());
 				sum2 += e1.getSummonerElo() + e1.getLatency();
 				team2.put(new Integer(e1.getSummonerId()), e1);
-				System.out.println("insertion dans team2 de " + e1.getSummonerId());
 			}
 			else {
 				sum1 += e1.getSummonerElo() + e1.getLatency();
 				team1.put(new Integer(e1.getSummonerId()), e1);
-				System.out.println("insertion dans team1 de " + e1.getSummonerId());
 				sum2 += e2.getSummonerElo() + e2.getLatency();
 				team2.put(new Integer(e2.getSummonerId()), e2);
-				System.out.println("insertion dans team2 de " + e2.getSummonerId());
 			}
 		}
 		joueurs10.clear();
-		System.out.println("taille de team1 " + team1.size() + " taille de team2 " + team2.size());
 		EnvoiInfoJoueur(team1, team2);
 	}
 	
