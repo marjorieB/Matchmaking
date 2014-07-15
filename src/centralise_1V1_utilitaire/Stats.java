@@ -10,7 +10,11 @@ public class Stats {
 	public Stats (String arg, String algo) {
 		try {
 			fw = new FileWriter("statistiques_joueurs_" + algo + arg + ".csv");
+			fw.write("summonerId1,summonerElo1,latence1,duration1,temps_exécution1,summonerId2,summonerElo2,latence2,duration2,temps_exécution2\n");
+			fw.flush();
 			fw1 = new FileWriter ("Statistiques_" + algo + "_temps" + arg + ".csv");
+			fw1.write("temps_total_exécution\n");
+			fw1.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

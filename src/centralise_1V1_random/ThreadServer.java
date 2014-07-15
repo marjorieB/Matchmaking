@@ -24,6 +24,8 @@ public class ThreadServer extends Thread {
 		joueurs = liste;
 		try {
 			fw = new FileWriter("nb_connexions_par_seconde_random"+ arg + ".csv");
+			fw.write("nb_connexions_par_seconde\n");
+			fw.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

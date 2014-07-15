@@ -17,6 +17,8 @@ public class TacheConnexions extends Thread {
 		this.nb_connexions = nb_connexions;
 		try {
 			fw = new FileWriter("nb_connexions_par_seconde_BD_spatiale" + arg + ".csv");
+			fw.write("nb_connexions_par_seconde\n");
+			fw.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

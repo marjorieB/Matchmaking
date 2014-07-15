@@ -31,6 +31,8 @@ public class ThreadServer extends Thread {
 	public ThreadServer(LinkedList<JoueurItf> liste, String arg) {
 		try {
 			fw = new FileWriter("nb_connexions_par_seconde_naif" + arg + ".csv");
+			fw.write("nb_connexions_par_seconde\n");
+			fw.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
