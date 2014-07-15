@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for i in `seq 1 10`;
+do
+	touch nb_connexions_par_seconde_naif_$i.csv;	
+	echo -e "nb_connexions_par_seconde" >> nb_connexions_par_seconde_naif_$i.csv;
+	cat nb_connexions_par_seconde_naif$i.csv >> nb_connexions_par_seconde_naif_$i.csv;
+	rm -f nb_connexions_par_seconde_naif$i.csv;
+	mv nb_connexions_par_seconde_naif_$i.csv nb_connexions_par_seconde_naif$i.csv
+done

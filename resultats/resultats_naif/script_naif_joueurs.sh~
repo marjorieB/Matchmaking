@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for i in `seq 1 10`;
+do
+	touch statistiques_joueurs_naif_$i.csv;	
+	echo -e "temps_total_exécution" >> statistiques_joueurs_naif_$i.csv;
+	cat statistiques_joueurs_naif$i.csv >> statistiques_joueurs_naif_$i.csv;
+	rm -f statistiques_joueurs_naif$i.csv;
+	mv statistiques_joueurs_naif_$i.csv statistiques_joueurs_naif$i.csv
+done

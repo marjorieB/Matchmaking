@@ -1,0 +1,302 @@
+
+
+Statistiques pour l'implémentation random
+temps total d'éxécution
+234315
+234971
+234691
+235086
+234875
+235813
+234506
+235182
+moyenne: 234929
+écart-type temps total = 431.18485015130113
+nombre de paires de joueurs matchés ensembles dont l'écart summonerElo = 0
+29
+28
+30
+22
+22
+27
+32
+27
+moyenne: 27
+écart-type nombre de joueurs matchés avec un écart de summonerElo de 0 = 3.3354160160315836
+nombre de paires de joueurs matchés ensembles dont l'écart de latence = 0
+737
+738
+735
+783
+732
+752
+747
+784
+moyenne: 751
+écart-type nombre de joueurs matchés avec un écart de latence de 0 = 19.72308292331602
+nombre de paires de joueurs matchés ensembles dont l'écart de distance = 0
+0
+0
+0
+0
+1
+0
+0
+1
+moyenne: 0
+écart-type de joueurs matchés avec un écart de distance de 0 = 0.5
+nombre de joueurs matchés au bout de 0 secondes
+60419
+60473
+60390
+60302
+60335
+60493
+60343
+60426
+moyenne: 60397
+écart-type de joueurs matchés au bout de 0 ms = 63.39459756162192
+distance moyenne entre les paires de joueurs matchés ensembles
+618.478169211362
+617.2404203585568
+618.3231503239867
+617.4584343936284
+619.1241505015498
+618.7444609191143
+614.8669816213784
+618.5841135021169
+moyenne: 617.8524851039617
+écart-type des distance moyenne inter exécution = 1.2749593357349025
+écart-type de la distance moyenne intra exécution
+454.4668400983356
+455.8471015389787
+454.2002689490783
+455.95708203313103
+455.9982959680158
+456.21869288962733
+454.7452409116692
+454.4558343256183
+moyenne: 455.23616958930666
+temps moyen de matches des joueurs (en ms)
+1
+1
+1
+1
+1
+1
+1
+1
+1
+moyenne: 1
+écart-type du temps moyen de matchmaking inter exécution = 0.0
+écart-type du temps total de matchmaking intra exécution
+3.621654318125903
+3.717992738024108
+3.671746178591325
+3.7409490774401086
+3.6146880916615753
+3.8069502229474974
+3.6305949925597596
+3.7418431287268046
+moyenne: 3.693302343509635
+
+
+Statistiques pour l'implémentation naif
+temps total d'éxécution
+264554
+264731
+264903
+265050
+265205
+265577
+262783
+263154
+moyenne: 264494
+écart-type temps total = 931.2435905819701
+nombre de paires de joueurs matchés ensembles dont l'écart summonerElo = 0
+1354
+1397
+1385
+1388
+1338
+1386
+1377
+1381
+moyenne: 1375
+écart-type nombre de joueurs matchés avec un écart de summonerElo de 0 = 18.452642087245934
+nombre de paires de joueurs matchés ensembles dont l'écart de latence = 0
+1418
+1421
+1505
+1469
+1460
+1464
+1457
+1440
+moyenne: 1454
+écart-type nombre de joueurs matchés avec un écart de latence de 0 = 26.343879744638983
+nombre de paires de joueurs matchés ensembles dont l'écart de distance = 0
+32
+49
+31
+41
+43
+33
+45
+49
+moyenne: 40
+écart-type de joueurs matchés avec un écart de distance de 0 = 6.991065727054782
+nombre de joueurs matchés au bout de 0 secondes
+45718
+45161
+45030
+46291
+44277
+44798
+45905
+45579
+moyenne: 45344
+écart-type de joueurs matchés au bout de 0 ms = 609.8484442875952
+distance moyenne entre les paires de joueurs matchés ensembles
+16.968109354563364
+16.94452652360601
+16.904183389498048
+16.833328893746696
+16.933332639726615
+16.77953880337007
+16.89625953806325
+16.952894153159157
+moyenne: 16.90152166196665
+écart-type des distance moyenne inter exécution = 0.060724023517945584
+écart-type de la distance moyenne intra exécution
+44.5800435725628
+43.81914696671879
+41.77551680032444
+40.31859345705035
+41.650780853573906
+40.51150426170479
+44.06770057108177
+43.378649124100505
+moyenne: 42.51274195088967
+temps moyen de matches des joueurs (en ms)
+380
+378
+379
+379
+378
+378
+379
+381
+moyenne: 379
+écart-type du temps moyen de matchmaking inter exécution = 1.0
+écart-type du temps total de matchmaking intra exécution
+1866.1707870556756
+1861.6305578954166
+1863.9401304011885
+1869.4708894336923
+1862.6483108681573
+1860.8430588660613
+1866.4159332313898
+1876.372558853918
+moyenne: 1865.9365283256875
+
+
+Statistiques pour l'implémentation BD_Spatiale
+temps total d'éxécution
+2052653
+1986632
+2046932
+2016213
+1979339
+2006942
+1987865
+2056212
+moyenne: 2016598
+écart-type temps total = 29568.88073634171
+nombre de paires de joueurs matchés ensembles dont l'écart summonerElo = 0
+1800
+1759
+1810
+1797
+1830
+1760
+1785
+1784
+moyenne: 1790
+écart-type nombre de joueurs matchés avec un écart de summonerElo de 0 = 22.55825791146116
+nombre de paires de joueurs matchés ensembles dont l'écart de latence = 0
+1900
+1923
+1885
+1915
+1936
+1868
+1922
+1870
+moyenne: 1902
+écart-type nombre de joueurs matchés avec un écart de latence de 0 = 24.080593846498054
+nombre de paires de joueurs matchés ensembles dont l'écart de distance = 0
+81
+75
+86
+78
+71
+71
+78
+79
+moyenne: 77
+écart-type de joueurs matchés avec un écart de distance de 0 = 4.7302219821061255
+nombre de joueurs matchés au bout de 0 secondes
+0
+0
+0
+0
+0
+0
+0
+0
+0
+moyenne: 0
+écart-type de joueurs matchés au bout de 0 ms = 0.0
+distance moyenne entre les paires de joueurs matchés ensembles
+18.013473292118697
+17.81954486074327
+18.141703001934264
+18.12170079888667
+18.13876670946116
+17.946161284450163
+18.025276963577163
+18.068987324709397
+moyenne: 18.034451779485096
+écart-type des distance moyenne inter exécution = 0.10349758090106112
+écart-type de la distance moyenne intra exécution
+56.65042947722523
+58.233501974290384
+58.27166807425003
+56.299774442352806
+52.93242555515729
+51.68293546800473
+55.79417541631415
+56.32639343202918
+moyenne: 55.773912979952975
+temps moyen de matches des joueurs (en ms)
+39900
+38473
+39772
+39102
+38318
+38901
+38493
+39975
+moyenne: 39116
+écart-type du temps moyen de matchmaking inter exécution = 639.1083632687026
+écart-type du temps total de matchmaking intra exécution
+123088.78469146322
+118778.65740151834
+122712.25493549685
+120700.60643063129
+118286.61690076723
+120082.30444608003
+118811.17777904405
+123390.2687252105
+moyenne: 120731.33391377643
