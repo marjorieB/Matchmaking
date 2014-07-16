@@ -27,7 +27,7 @@ public class ThreadServer extends Thread {
 	
 	public ThreadServer(LinkedList<JoueurItf> liste, String arg, String arg1) {
 		this.arg1 = Integer.parseInt(arg1);
-		matriceJoueurs = new LinkedList[(3000/this.arg1) - 1][(3000/this.arg1) - 1];
+		matriceJoueurs = new LinkedList[(3000/this.arg1)][(3000/this.arg1)];
 		for (int i = 0; i < matriceJoueurs.length; i++) {
 			for (int j = 0; j < matriceJoueurs[0].length; j++) {
 				matriceJoueurs[i][j] = new LinkedList<JoueurItf>();
@@ -62,6 +62,9 @@ public class ThreadServer extends Thread {
 					nb_connexions += 1;
 					x = joueurs.getFirst().getSummonerElo() / arg1;
 					y = joueurs.getFirst().getLatency() / arg1;
+					System.out.println("x = " + x);
+					System.out.println("y = " + y);
+					System.out.println("taille matrice = " + matriceJoueurs.length);
 					matriceJoueurs[x][y].add(joueurs.removeFirst());
 					synchronized(matriceJoueurs) {
 						if (matriceJoueurs[x][y].size() == 10) {
