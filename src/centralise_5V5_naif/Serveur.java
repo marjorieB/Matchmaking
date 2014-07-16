@@ -17,8 +17,17 @@ public class Serveur {
 		BufferedReader br;
 		String recu;
 		String [] demandes;
+		ThreadServer t;
 		LinkedList<JoueurItf> joueurs = new LinkedList<JoueurItf>();
-		ThreadServer t = new ThreadServer(joueurs, args[0]);
+		if (args.length == 0) {
+			t = new ThreadServer(joueurs, "0", "40");
+		}
+		else if (args.length == 1) {
+			t = new ThreadServer(joueurs, args[0], "40");
+		}
+		else {
+			t = new ThreadServer(joueurs, args[0], args[1]);
+		}
 		t.start();
 		int nb_connexions = 0;
 				

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+for i in `seq 1 10`;
+do
+	touch toto.csv;	
+	echo -e "nb_connexions_par_seconde" >> toto.csv;
+	cat nb_connexions_par_seconde_naif_5V5_$i.csv >> toto.csv;
+	rm -f nb_connexions_par_seconde_naif_5V5_$i.csv;
+	mv toto.csv nb_connexions_par_seconde_naif_5V5_$i.csv;
+done

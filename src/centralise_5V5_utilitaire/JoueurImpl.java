@@ -68,9 +68,9 @@ public class JoueurImpl implements JoueurItf {
 		
 		
 		try {
-		/*	InetAddress addr = InetAddress.getByName("132.227.199.23");
- 			s = new Socket(addr, 12345);*/
-			s = new Socket("localhost", 23456);
+			InetAddress addr = InetAddress.getByName("132.227.199.23");
+ 			s = new Socket(addr, 12345);
+			//s = new Socket("localhost", 23456);
 			s.setSoTimeout(0);
 			os = s.getOutputStream();
 			dos = new DataOutputStream(os);

@@ -14,7 +14,8 @@ import centralise_5V5_utilitaire.*;
 
 public class ThreadServer extends Thread {
 	private LinkedList<JoueurItf> joueurs;
-	private LinkedList<JoueurItf> [][] matriceJoueurs = new LinkedList[74][74];
+	private LinkedList<JoueurItf> [][] matriceJoueurs;
+	private int arg1;
 	private Stats stats;
 	private FileWriter fw;
 	private int nb_matchs = 0;
@@ -24,7 +25,9 @@ public class ThreadServer extends Thread {
 	private TacheInterneServeur tis;
 	private Timer timer;
 	
-	public ThreadServer(LinkedList<JoueurItf> liste, String arg) {
+	public ThreadServer(LinkedList<JoueurItf> liste, String arg, String arg1) {
+		this.arg1 = Integer.parseInt(arg1);
+		matriceJoueurs = new LinkedList[(3000/this.arg1) - 1][(3000/this.arg1) - 1];
 		for (int i = 0; i < matriceJoueurs.length; i++) {
 			for (int j = 0; j < matriceJoueurs[0].length; j++) {
 				matriceJoueurs[i][j] = new LinkedList<JoueurItf>();
@@ -32,7 +35,9 @@ public class ThreadServer extends Thread {
 		}
 		joueurs = liste;
 		try {
-			fw = new FileWriter("nb_connexions_par_seconde_naif_5V5_"+ arg + ".csv");
+			fw = new FileWriter("nb_connexions_par_seconde_naif_5V5_criteres_" + arg1 + "_" + arg + ".csv");
+			fw.write("nb_connexions_par_seconde\n");
+			fw.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -41,7 +46,7 @@ public class ThreadServer extends Thread {
 		timer = new Timer();
 		timer.scheduleAtFixedRate(tc, 0, 1000);
 		timer.scheduleAtFixedRate(tis, 0, 5000);
-		this.stats = new Stats(arg, "naif_5V5_");
+		this.stats = new Stats(arg, "naif_5V5_criteres_" + arg1 + "_");
 	}
 	
 	public void run () {
@@ -55,8 +60,8 @@ public class ThreadServer extends Thread {
 						first = false;
 					}
 					nb_connexions += 1;
-					x = joueurs.getFirst().getSummonerElo() / 40;
-					y = joueurs.getFirst().getLatency() / 40;
+					x = joueurs.getFirst().getSummonerElo() / arg1;
+					y = joueurs.getFirst().getLatency() / arg1;
 					matriceJoueurs[x][y].add(joueurs.removeFirst());
 					synchronized(matriceJoueurs) {
 						if (matriceJoueurs[x][y].size() == 10) {
@@ -225,7 +230,7 @@ public class ThreadServer extends Thread {
 	public void chercherJoueurs(Point pt) {
 		int m = 0;
 		
-		while ((matriceJoueurs[pt.getX()][pt.getY()].size() < 10) && m < 74) {
+		while ((matriceJoueurs[pt.getX()][pt.getY()].size() < 10) && m < ((3000 / arg1) - 1)) {
 			m++;
 			for (int k = -m; k <= m; k++) {
 				for (int l = -m; l <= m; l++) {
