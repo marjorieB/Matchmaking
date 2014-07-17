@@ -1,7 +1,7 @@
 
 
 Statistiques pour l'implémentation random
-temps total d'éxécution
+temps total d'exécution
 234315
 234971
 234691
@@ -102,7 +102,7 @@ moyenne: 3.693302343509635
 
 
 Statistiques pour l'implémentation naif
-temps total d'éxécution
+temps total d'exécution
 264554
 264731
 264903
@@ -202,7 +202,7 @@ moyenne: 1865.9365283256875
 
 
 Statistiques pour l'implémentation BD_Spatiale
-temps total d'éxécution
+temps total d'exécution
 2052653
 1986632
 2046932
