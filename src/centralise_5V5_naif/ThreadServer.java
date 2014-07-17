@@ -62,9 +62,6 @@ public class ThreadServer extends Thread {
 					nb_connexions += 1;
 					x = joueurs.getFirst().getSummonerElo() / arg1;
 					y = joueurs.getFirst().getLatency() / arg1;
-					System.out.println("x = " + x);
-					System.out.println("y = " + y);
-					System.out.println("taille matrice = " + matriceJoueurs.length);
 					matriceJoueurs[x][y].add(joueurs.removeFirst());
 					synchronized(matriceJoueurs) {
 						if (matriceJoueurs[x][y].size() == 10) {
