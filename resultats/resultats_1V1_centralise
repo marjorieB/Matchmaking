@@ -39,8 +39,8 @@ nombre de paires de joueurs matchés ensembles dont l'écart de distance = 0
 0
 0
 0
-1
 0
+1
 0
 1
 moyenne: 0
@@ -78,7 +78,6 @@ moyenne: 617.8524851039617
 454.4558343256183
 moyenne: 455.23616958930666
 temps moyen de matches des joueurs (en ms)
-1
 1
 1
 1
@@ -247,7 +246,6 @@ nombre de paires de joueurs matchés ensembles dont l'écart de distance = 0
 moyenne: 77
 écart-type de joueurs matchés avec un écart de distance de 0 = 4.7302219821061255
 nombre de joueurs matchés au bout de 0 secondes
-0
 0
 0
 0
