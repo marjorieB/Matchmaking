@@ -34,15 +34,15 @@ moyenne: 10
 moyenne: 9.744819426473327
 écart-type inter exécution du temps de matchmaking des joueurs = 0.0
 distance moyenne (summonerElo et latence) entre les joueurs des équipes adverses
-2152.5816898325434
-2171.7611102320657
-2157.1544310304007
-2174.743906350065
-2164.586699566094
-2167.859711050603
-2141.0326450630014
-2170.811092810717
-moyenne: 2162.5664107419366
+1076.2908449162717
+1085.8805551160328
+1078.5772155152004
+1087.3719531750326
+1082.293349783047
+1083.9298555253015
+1070.5163225315007
+1085.4055464053586
+moyenne: 1081.2832053709683
 écart-type intra exécution de la distance moyenne entre les joueurs des équipes adverses
 10.30220753042764
 9.312015893457227
@@ -53,7 +53,7 @@ moyenne: 2162.5664107419366
 10.069209998803283
 9.659724116143277
 moyenne: 9.744819426473327
-écart-type inter exécution de la distance moyenne entre les joueurs des équipes adverses = 10.756373202999365
+écart-type inter exécution de la distance moyenne entre les joueurs des équipes adverses = 5.378186601499682
 
 
 Statistiques pour l'implémentation naif
@@ -90,15 +90,15 @@ moyenne: 1931
 moyenne: 2031.5378605539893
 écart-type inter exécution du temps de matchmaking des joueurs = 11.20267825120404
 distance moyenne (summonerElo et latence) entre les joueurs des équipes adverses
-133.6787216279856
-133.1443587530146
-132.36356379438294
-132.30894178085674
-132.13287760550858
-134.62597681747718
-132.68580047168984
-134.32260758556637
-moyenne: 133.15785605456023
+66.8393608139928
+66.5721793765073
+66.18178189719147
+66.15447089042837
+66.06643880275429
+67.31298840873859
+66.34290023584492
+67.16130379278319
+moyenne: 66.57892802728011
 écart-type intra exécution de la distance moyenne entre les joueurs des équipes adverses
 2032.8474051905619
 2012.0335586937906
@@ -109,4 +109,4 @@ moyenne: 133.15785605456023
 2017.1266711612336
 2036.0291274439076
 moyenne: 2031.5378605539893
-écart-type inter exécution de la distance moyenne entre les joueurs des équipes adverses = 0.8950196058768937
+écart-type inter exécution de la distance moyenne entre les joueurs des équipes adverses = 0.44750980293844683
